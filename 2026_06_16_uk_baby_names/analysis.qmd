@@ -17,8 +17,41 @@ execute:
 ## Setup
 
 ```{r setup}
-week_dir <- knitr::current_input(dir = TRUE)
-project_root <- normalizePath(file.path(week_dir, ".."), winslash = "/", mustWork = FALSE)
+raw_input <- tryCatch(knitr::current_input(dir = TRUE), error = function(e) NULL)
+
+tt_fix_path <- function(path) {
+  if (is.null(path) || is.na(path) || !nzchar(path)) {
+    return(path)
+  }
+  if (.Platform$OS.type == "windows" && grepl("^/home/", path)) {
+    path <- sub("^/home/", "//wsl.localhost/Ubuntu/home/", path)
+  }
+  normalizePath(path, winslash = "/", mustWork = FALSE)
+}
+
+paths_file <- file.path(tt_fix_path(raw_input), "R/paths.R")
+if (!file.exists(paths_file)) {
+  paths_file <- file.path(tt_fix_path("2026_06_16_uk_baby_names"), "R/paths.R")
+}
+source(paths_file)
+
+week_dir <- tt_week_dir(raw_input = raw_input)
+project_root <- tt_project_root(week_dir)
+
+# #region agent log
+tt_debug_log(
+  "A",
+  "analysis.qmd:setup",
+  "resolved paths",
+  list(
+    raw_input = raw_input %||% "",
+    week_dir = week_dir,
+    project_root = project_root,
+    install_exists = file.exists(file.path(project_root, "install_packages.R")),
+    wd = getwd()
+  )
+)
+# #endregion
 
 source(file.path(project_root, "install_packages.R"))
 
@@ -38,6 +71,8 @@ if (!file.exists(file.path(week_dir, "data/england_wales_names.csv"))) {
 baby_names <- load_baby_names(data_dir = file.path(week_dir, "data"))
 uniqueness <- compute_uniqueness(baby_names)
 comparison_year <- min(2024, max(baby_names$Year, na.rm = TRUE))
+
+`%||%` <- function(x, y) if (is.null(x)) y else x
 ```
 
 Data from [TidyTuesday 2026-06-16](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16): baby names for England & Wales, Scotland, and Northern Ireland.
