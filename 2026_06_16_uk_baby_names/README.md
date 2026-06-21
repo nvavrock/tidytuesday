@@ -20,11 +20,14 @@ source("run.R")
 
 ## Report
 
-Open [analysis.html](analysis.html) in a browser, or render:
+Open [analysis.html](analysis.html) in a browser, or render from project root:
 
 ```r
-quarto::quarto_render("2026_06_16_uk_baby_names/analysis.qmd")
+source("render_week.R")
+render_week("2026_06_16_uk_baby_names")
 ```
+
+Avoid `quarto preview` on WSL paths — use `render_week()` instead.
 
 ## Outputs
 
