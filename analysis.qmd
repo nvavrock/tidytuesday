@@ -1,0 +1,116 @@
+---
+title: "TidyTuesday: UK Baby Names"
+subtitle: "Week 24 · 2026-06-16"
+author: "Your Name"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    theme: flatly
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Setup
+
+```{r setup}
+source("install_packages.R")
+
+library(tidyverse)
+
+source("R/load_data.R")
+source("R/01_regional_comparison.R")
+source("R/02_name_uniqueness.R")
+source("R/03_bridgerton_trend.R")
+
+dir.create("output", showWarnings = FALSE)
+
+if (!file.exists("data/england_wales_names.csv")) {
+  download_data()
+}
+
+names <- load_baby_names()
+uniqueness <- compute_uniqueness(names)
+comparison_year <- min(2024, max(names$Year, na.rm = TRUE))
+```
+
+Data from [TidyTuesday 2026-06-16](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16): baby names for England & Wales, Scotland, and Northern Ireland.
+
+---
+
+## Angle 1: Regional comparison
+
+How do the most popular names compare across the three UK regions?
+
+```{r regional-top}
+plot_regional_top_names(names, year = comparison_year)
+```
+
+```{r regional-overlap}
+plot_regional_overlap(names, year = comparison_year)
+```
+
+```{r regional-table}
+summarise_regional_comparison(names, year = comparison_year) |>
+  knitr::kable(caption = paste("Most popular name by region and sex,", comparison_year))
+```
+
+**Takeaway:** Noah, Oliver, and Muhammad appear frequently in boys' top lists; girls' names show more regional variation. Names that land in multiple regional top-10 lists (e.g. Olivia, Isla) suggest shared cultural trends across the UK.
+
+---
+
+## Angle 2: Name uniqueness
+
+Are boys' or girls' names more unique? We measure:
+
+- **Distinct names per 1,000 births** — higher means more naming diversity
+- **Share outside top 100** — higher means fewer parents pick ultra-common names
+
+```{r uniqueness-time}
+plot_uniqueness_over_time(uniqueness)
+```
+
+```{r uniqueness-sex}
+plot_uniqueness_by_sex(uniqueness)
+```
+
+```{r uniqueness-table}
+summarise_uniqueness(uniqueness) |>
+  knitr::kable(digits = 1, caption = "Average uniqueness metrics in the latest available year")
+```
+
+**Takeaway:** Girls' names are typically more diverse than boys' names — more distinct names per 1,000 births and a larger share of births using names outside the top 100. This pattern holds across all three regions.
+
+---
+
+## Angle 3: The Bridgerton trend
+
+National Records of Scotland reported that *Bridgerton* character names rose in 2025. Do we see the same in the data?
+
+```{r bridgerton-trend}
+plot_bridgerton_trend(names)
+```
+
+```{r bridgerton-yoy}
+plot_bridgerton_2024_2025(names)
+```
+
+```{r bridgerton-table}
+summarise_bridgerton(names) |>
+  knitr::kable(caption = "Bridgerton name ranks in 2024 vs 2025")
+```
+
+**Takeaway:** In Scotland, Daphne jumped from 476th to 172nd, Eloise from 124th to 91st, and Penelope from 81st to 71st between 2024 and 2025 — a clear pop-culture bump. England & Wales data currently ends in 2024, so the 2025 Bridgerton spike is most visible in Scotland and Northern Ireland.
+
+---
+
+## Share your work
+
+- Hashtags: `#TidyTuesday` `#RStats` `#DataViz`
+- Credit: ONS, NISRA, National Records of Scotland via [TidyTuesday](https://tidytues.day)
+- Include alt text when posting charts on LinkedIn
+
+See `LINKEDIN.md` for a draft post.

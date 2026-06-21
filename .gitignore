@@ -1,0 +1,12 @@
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj.user
+.DS_Store
+*.log
+*.aux
+*.out
+*.toc
+*.pdf
+_site/
+.quarto/
