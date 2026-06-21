@@ -1,7 +1,7 @@
 ---
 title: "TidyTuesday: UK Baby Names"
 subtitle: "Week 24 · 2026-06-16"
-author: "Your Name"
+author: "Nate Vavrock"
 format:
   html:
     toc: true
@@ -17,48 +17,22 @@ execute:
 ## Setup
 
 ```{r setup}
-tt_fix_path <- function(path) {
-  if (is.null(path) || is.na(path) || !nzchar(path)) {
-    return(path)
-  }
-  if (.Platform$OS.type == "windows" && grepl("^/home/", path)) {
-    path <- sub("^/home/", "//wsl.localhost/Ubuntu/home/", path)
-  }
-  normalizePath(path, winslash = "/", mustWork = FALSE)
-}
-
-week_dir_env <- Sys.getenv("TT_WEEK_DIR", unset = "")
-project_root_env <- Sys.getenv("TT_PROJECT_ROOT", unset = "")
-input_file <- ""
-
-if (nzchar(week_dir_env) && nzchar(project_root_env)) {
-  week_dir <- tt_fix_path(week_dir_env)
-  project_root <- tt_fix_path(project_root_env)
-} else {
-  input_file <- knitr::current_input(dir = FALSE)
-  if (is.null(input_file) || !nzchar(input_file)) {
-    input_file <- knitr::current_input(dir = TRUE)
-  }
-  week_dir <- tt_fix_path(dirname(input_file))
-  project_root <- tt_fix_path(file.path(week_dir, ".."))
-}
-
-source(file.path(project_root, "install_packages.R"))
+source("../install_packages.R")
 
 library(tidyverse)
 
-source(file.path(week_dir, "R/load_data.R"))
-source(file.path(week_dir, "R/01_regional_comparison.R"))
-source(file.path(week_dir, "R/02_name_uniqueness.R"))
-source(file.path(week_dir, "R/03_bridgerton_trend.R"))
+source("R/load_data.R")
+source("R/01_regional_comparison.R")
+source("R/02_name_uniqueness.R")
+source("R/03_bridgerton_trend.R")
 
-dir.create(file.path(week_dir, "output"), showWarnings = FALSE)
+dir.create("output", showWarnings = FALSE)
 
-if (!file.exists(file.path(week_dir, "data/england_wales_names.csv"))) {
-  download_data(data_dir = file.path(week_dir, "data"))
+if (!file.exists("data/england_wales_names.csv")) {
+  download_data()
 }
 
-baby_names <- load_baby_names(data_dir = file.path(week_dir, "data"))
+baby_names <- load_baby_names()
 uniqueness <- compute_uniqueness(baby_names)
 comparison_year <- min(2024, max(baby_names$Year, na.rm = TRUE))
 ```

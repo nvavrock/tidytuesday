@@ -20,14 +20,12 @@ source("run.R")
 
 ## Report
 
-Open [analysis.html](analysis.html) in a browser, or render from project root:
+Open [analysis.html](analysis.html) in a browser, open `analysis.qmd` and click **Render** in RStudio, or render from project root:
 
 ```r
 source("render_week.R")
 render_week("2026_06_16_uk_baby_names")
 ```
-
-Avoid `quarto preview` on WSL paths — use `render_week()` instead.
 
 ## Outputs
 
