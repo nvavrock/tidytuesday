@@ -53,6 +53,10 @@ tidytuesday/
 
 Add future weeks as sibling folders (e.g. `2026_06_23_next_topic/`).
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution and LLM-assisted editing guidelines.
+
 ## Citation
 
 ```bibtex

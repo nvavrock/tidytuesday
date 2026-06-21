@@ -1,0 +1,18 @@
+---
+description: LLM-assisted contribution standards for this repo
+alwaysApply: true
+---
+
+# LLM contributions (tidytuesday)
+
+Adapted from Jellyfin's LLM policy for this personal R/Quarto TidyTuesday repo.
+
+- **Scope**: One task per change set. No unrelated edits, refactors, or formatting sweeps.
+- **Style**: Match existing week folders, `run.R`, and `analysis.qmd` patterns. Minimal comments; no debug/agent logging.
+- **No junk commits**: Do not add `.cursor/debug*.log`, `.claude/`, temp commit-msg files, or other editor session artifacts.
+- **Understand the diff**: The human must be able to explain every change. Write commit/PR text in plain human language, not pasted model boilerplate.
+- **Test**: After R or Quarto changes, verify `run_week("<week>")` and `render_week("<week>")` (or Render that week's `analysis.qmd`) from the project root.
+- **Review-ready**: Do not submit code you cannot adjust without blind re-prompting. Split large work into focused commits.
+- **Golden rule**: LLMs assist; they do not replace review. Never commit vague-prompt slop as-is.
+
+When sharing public write-ups from this repo, credit TidyTuesday and source data; disclose material LLM assistance if relevant.

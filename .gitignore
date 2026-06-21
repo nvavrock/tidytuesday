@@ -10,3 +10,12 @@
 *.pdf
 _site/
 .quarto/
+
+# Cursor local/session files (project rules under .cursor/rules/ are tracked)
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
+
+# LLM/editor session artifacts
+.claude/
+.git_commit_msg.txt
