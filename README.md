@@ -1,68 +1,47 @@
-# TidyTuesday: UK Baby Names (2026-06-16)
+# TidyTuesday
 
-Weekly analysis for [TidyTuesday Week 24](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16) — baby names across England & Wales, Scotland, and Northern Ireland.
+Personal R analyses for the weekly [#TidyTuesday](https://tidytues.day) social data project.
 
-## Open in RStudio
+Official datasets: [rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday)
 
-1. Open `tidytuesday.Rproj` in RStudio (double-click the file or **File → Open Project**).
+## Quick start
+
+1. Open `tidytuesday.Rproj` in RStudio.
 2. Install packages once:
 
 ```r
 source("install_packages.R")
 ```
 
-3. Run everything:
+3. Run a week:
 
 ```r
-source("run_all.R")
+source("run_week.R")
+run_week("2026_06_16_uk_baby_names")
 ```
 
-   Or render the full report:
+## Weeks
 
-```r
-quarto::quarto_render("analysis.qmd")
-```
+| Date | Topic | Folder |
+|------|-------|--------|
+| 2026-06-16 | UK Baby Names | [2026_06_16_uk_baby_names/](2026_06_16_uk_baby_names/) |
 
-   In RStudio: open `analysis.qmd` and click **Render**.
-
-Plots are saved to `output/`.
-
-## Three angles explored
-
-| Angle | Question | Output |
-|-------|----------|--------|
-| **Regional comparison** | How do top names differ across UK regions? | `output/01_regional_top_names.png`, `02_regional_overlap.png` |
-| **Name uniqueness** | Are boys' or girls' names more unique? | `output/03_uniqueness_over_time.png`, `04_uniqueness_by_sex.png` |
-| **Bridgerton trend** | Did Daphne, Eloise, and Penelope rise after the show? | `output/05_bridgerton_trend.png`, `06_bridgerton_2024_2025.png` |
-
-## Project structure
+## Project layout
 
 ```
 tidytuesday/
-├── tidytuesday.Rproj      # Open this in RStudio
-├── install_packages.R     # One-time package setup
-├── run_all.R              # Generate all plots + summary CSVs
-├── analysis.qmd           # Full Quarto report (all three angles)
-├── R/
-│   ├── load_data.R
-│   ├── 01_regional_comparison.R
-│   ├── 02_name_uniqueness.R
-│   └── 03_bridgerton_trend.R
-├── data/                  # CSV files (downloaded automatically if missing)
-└── output/                # Generated plots and summary tables
+├── tidytuesday.Rproj
+├── install_packages.R       # shared packages
+├── run_week.R               # run any week folder
+└── 2026_06_16_uk_baby_names/
+    ├── run.R
+    ├── analysis.qmd
+    ├── data/
+    ├── output/
+    └── R/
 ```
 
-## Data sources
-
-- [England & Wales baby names](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/livebirths/datasets/babynamesinenglandandwalesfrom1996) (ONS)
-- [Scotland baby names](https://www.nrscotland.gov.uk/publications/babies-first-names-2025/) (National Records of Scotland)
-- [Northern Ireland baby names](https://www.nisra.gov.uk/publications/baby-names-2025) (NISRA)
-
-Curated by [Nicola Rennie](https://github.com/nrennie) for TidyTuesday.
-
-## Share on social media
-
-Use `#TidyTuesday` and `#RStats`. Link to this repo and include alt text for charts. See `LINKEDIN.md` for a ready-to-edit post.
+Add future weeks as sibling folders (e.g. `2026_06_23_next_topic/`).
 
 ## Citation
 

@@ -17,24 +17,27 @@ execute:
 ## Setup
 
 ```{r setup}
-source("install_packages.R")
+week_dir <- knitr::current_input(dir = TRUE)
+project_root <- normalizePath(file.path(week_dir, ".."), winslash = "/", mustWork = FALSE)
+
+source(file.path(project_root, "install_packages.R"))
 
 library(tidyverse)
 
-source("R/load_data.R")
-source("R/01_regional_comparison.R")
-source("R/02_name_uniqueness.R")
-source("R/03_bridgerton_trend.R")
+source(file.path(week_dir, "R/load_data.R"))
+source(file.path(week_dir, "R/01_regional_comparison.R"))
+source(file.path(week_dir, "R/02_name_uniqueness.R"))
+source(file.path(week_dir, "R/03_bridgerton_trend.R"))
 
-dir.create("output", showWarnings = FALSE)
+dir.create(file.path(week_dir, "output"), showWarnings = FALSE)
 
-if (!file.exists("data/england_wales_names.csv")) {
-  download_data()
+if (!file.exists(file.path(week_dir, "data/england_wales_names.csv"))) {
+  download_data(data_dir = file.path(week_dir, "data"))
 }
 
-names <- load_baby_names()
-uniqueness <- compute_uniqueness(names)
-comparison_year <- min(2024, max(names$Year, na.rm = TRUE))
+baby_names <- load_baby_names(data_dir = file.path(week_dir, "data"))
+uniqueness <- compute_uniqueness(baby_names)
+comparison_year <- min(2024, max(baby_names$Year, na.rm = TRUE))
 ```
 
 Data from [TidyTuesday 2026-06-16](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16): baby names for England & Wales, Scotland, and Northern Ireland.
@@ -46,15 +49,15 @@ Data from [TidyTuesday 2026-06-16](https://github.com/rfordatascience/tidytuesda
 How do the most popular names compare across the three UK regions?
 
 ```{r regional-top}
-plot_regional_top_names(names, year = comparison_year)
+plot_regional_top_names(baby_names, year = comparison_year)
 ```
 
 ```{r regional-overlap}
-plot_regional_overlap(names, year = comparison_year)
+plot_regional_overlap(baby_names, year = comparison_year)
 ```
 
 ```{r regional-table}
-summarise_regional_comparison(names, year = comparison_year) |>
+summarise_regional_comparison(baby_names, year = comparison_year) |>
   knitr::kable(caption = paste("Most popular name by region and sex,", comparison_year))
 ```
 
@@ -91,15 +94,15 @@ summarise_uniqueness(uniqueness) |>
 National Records of Scotland reported that *Bridgerton* character names rose in 2025. Do we see the same in the data?
 
 ```{r bridgerton-trend}
-plot_bridgerton_trend(names)
+plot_bridgerton_trend(baby_names)
 ```
 
 ```{r bridgerton-yoy}
-plot_bridgerton_2024_2025(names)
+plot_bridgerton_2024_2025(baby_names)
 ```
 
 ```{r bridgerton-table}
-summarise_bridgerton(names) |>
+summarise_bridgerton(baby_names) |>
   knitr::kable(caption = "Bridgerton name ranks in 2024 vs 2025")
 ```
 

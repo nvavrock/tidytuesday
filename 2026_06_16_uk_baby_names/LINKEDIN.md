@@ -16,7 +16,7 @@ Three things stood out:
 
 3. **The Bridgerton effect** — In Scotland, Daphne rose from 476th to 172nd, Eloise from 124th to 91st, and Penelope from 81st to 71st between 2024 and 2025. Pop culture shows up in the data.
 
-Code and charts: https://github.com/nvavrock/tidytuesday
+Code and charts: https://github.com/nvavrock/tidytuesday/tree/main/2026_06_16_uk_baby_names
 
 Data: TidyTuesday / ONS, NISRA, National Records of Scotland
 https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16
