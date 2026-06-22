@@ -1,5 +1,14 @@
 # Load and combine UK baby name datasets for TidyTuesday 2026-06-16
 
+DATA_SOURCE_CAPTION <- "Source: ONS, NISRA, National Records of Scotland via TidyTuesday"
+
+SEX_COLORS <- c(Boy = "#0072B2", Girl = "#D55E00")
+REGION_COLORS <- c(
+  "England & Wales" = "#009E73",
+  Scotland = "#CC79A7",
+  "Northern Ireland" = "#E69F00"
+)
+
 load_baby_names <- function(data_dir = "data") {
   england_wales <- readr::read_csv(
     file.path(data_dir, "england_wales_names.csv"),

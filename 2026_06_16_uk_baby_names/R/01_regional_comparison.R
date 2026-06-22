@@ -6,31 +6,31 @@ plot_regional_top_names <- function(names, year = 2024, top_n = 10) {
     dplyr::filter(Year == year, !is.na(Rank), !is.na(Number)) |>
     dplyr::group_by(region, Sex) |>
     dplyr::slice_min(Rank, n = top_n, with_ties = FALSE) |>
+    dplyr::mutate(Name = forcats::fct_reorder(Name, Number)) |>
     dplyr::ungroup()
 
   top_names |>
     ggplot2::ggplot(
       ggplot2::aes(
-        x = reorder(Name, -Rank),
-        y = Number,
-        fill = region
+        x = Number,
+        y = Name,
+        fill = Sex
       )
     ) +
-    ggplot2::geom_col(position = "dodge") +
-    ggplot2::facet_wrap(~ Sex, scales = "free_x") +
-    ggplot2::scale_y_continuous(labels = scales::comma) +
+    ggplot2::geom_col() +
+    ggplot2::facet_grid(Sex ~ region, scales = "free") +
+    ggplot2::scale_x_continuous(labels = scales::comma) +
+    ggplot2::scale_fill_manual(values = SEX_COLORS) +
     ggplot2::labs(
       title = paste("Top", top_n, "baby names by UK region,", year),
       subtitle = "England & Wales data ends in 2024; Scotland and NI include 2025 in other charts",
       x = NULL,
-      y = "Number of babies",
-      fill = "Region"
+      y = NULL,
+      fill = NULL,
+      caption = DATA_SOURCE_CAPTION
     ) +
     ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(
-      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
-      legend.position = "bottom"
-    )
+    ggplot2::theme(legend.position = "none")
 }
 
 plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
@@ -67,7 +67,7 @@ plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
       ggplot2::aes(x = region, y = reorder(Name, Rank), fill = regions_in_top)
     ) +
     ggplot2::geom_tile(color = "white") +
-    ggplot2::geom_text(ggplot2::aes(label = Rank), size = 3) +
+    ggplot2::geom_text(ggplot2::aes(label = Rank), size = 3, color = "grey15") +
     ggplot2::facet_wrap(~ Sex, scales = "free_y") +
     ggplot2::scale_fill_gradient(
       "Regions\nin top 10",
@@ -78,7 +78,8 @@ plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
       title = paste("Names appearing in multiple regional top", top_n, "lists,", year),
       subtitle = "Tile labels show rank within each region (1 = most popular)",
       x = NULL,
-      y = NULL
+      y = NULL,
+      caption = DATA_SOURCE_CAPTION
     ) +
     ggplot2::theme_minimal(base_size = 12) +
     ggplot2::theme(legend.position = "bottom")

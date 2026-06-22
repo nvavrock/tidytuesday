@@ -24,13 +24,14 @@ plot_uniqueness_over_time <- function(uniqueness) {
     ) +
     ggplot2::geom_line(linewidth = 0.8) +
     ggplot2::facet_wrap(~ region, scales = "free_y") +
-    ggplot2::scale_color_manual(values = c(Boy = "#3182bd", Girl = "#de2d26")) +
+    ggplot2::scale_color_manual(values = SEX_COLORS) +
     ggplot2::labs(
       title = "Baby name diversity over time",
       subtitle = "Higher values = more distinct names per 1,000 births",
       x = NULL,
       y = "Distinct names per 1,000 births",
-      color = NULL
+      color = NULL,
+      caption = DATA_SOURCE_CAPTION
     ) +
     ggplot2::theme_minimal(base_size = 12) +
     ggplot2::theme(legend.position = "bottom")
@@ -56,14 +57,8 @@ plot_uniqueness_by_sex <- function(uniqueness, recent_years = 10) {
       size = 2,
       alpha = 0.85
     ) +
-    ggplot2::scale_fill_manual(values = c(Boy = "#3182bd", Girl = "#de2d26")) +
-    ggplot2::scale_color_manual(
-      values = c(
-        "England & Wales" = "#1b7837",
-        Scotland = "#762a83",
-        "Northern Ireland" = "#d95f02"
-      )
-    ) +
+    ggplot2::scale_fill_manual(values = SEX_COLORS) +
+    ggplot2::scale_color_manual(values = REGION_COLORS) +
     ggplot2::labs(
       title = paste(
         "Share of births with names outside the top 100",
@@ -72,7 +67,8 @@ plot_uniqueness_by_sex <- function(uniqueness, recent_years = 10) {
       subtitle = "Higher share suggests more unique / less concentrated naming",
       x = NULL,
       y = "% of births outside top 100",
-      color = "Region"
+      color = "Region",
+      caption = DATA_SOURCE_CAPTION
     ) +
     ggplot2::theme_minimal(base_size = 12) +
     ggplot2::theme(legend.position = "bottom", legend.box = "vertical")

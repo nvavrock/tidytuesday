@@ -34,7 +34,10 @@ Line chart showing rank over time for the girl names Daphne, Eloise, and Penelop
 Box plot comparing the percentage of baby boys and girls given names outside the top 100, by UK region. Girls consistently have a higher share of less common names.
 
 **Regional comparison (`output/01_regional_top_names.png`):**
-Grouped bar charts of the top 10 baby names for boys and girls in England & Wales, Scotland, and Northern Ireland in 2024.
+Horizontal bar charts in small multiples showing the top 10 baby names for boys and girls in England & Wales, Scotland, and Northern Ireland in 2024.
+
+**Bridgerton rank change (`output/06_bridgerton_2024_2025.png`):**
+Slope chart comparing baby name rank in 2024 vs 2025 for Daphne, Eloise, and Penelope across UK regions. Downward lines mean a name became more popular.
 
 ---
 

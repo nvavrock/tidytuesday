@@ -53,6 +53,20 @@ tidytuesday/
 
 Add future weeks as sibling folders (e.g. `2026_06_23_next_topic/`).
 
+## Visualization lessons (viz-rag)
+
+Chart lessons from this repo feed the separate [viz-rag](https://github.com/nvavrock/viz-rag) retrieval corpus.
+
+1. After improving charts, add a dated entry to [`VIZ_LESSONS.md`](VIZ_LESSONS.md) (what went wrong, what fixed it, link to the R file).
+2. From the `viz-rag` repo, rebuild and re-embed:
+
+```bash
+python ingest/build_corpus.py
+.venv\Scripts\python.exe -m rag.ingest
+```
+
+viz-rag ingests `VIZ_LESSONS.md`, week `R/*.R` plot functions, and its own `corpus/lessons/CHANGELOG.md`.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution and LLM-assisted editing guidelines.
