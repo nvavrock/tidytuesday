@@ -3,7 +3,6 @@
 pkgs <- c(
   "tidyverse",
   "scales",
-  "patchwork",
   "ggrepel"
 )
 

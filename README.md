@@ -29,6 +29,8 @@ render_week("2026_06_16_uk_baby_names")
 
 Or open `2026_06_16_uk_baby_names/analysis.qmd` and click **Render** in RStudio.
 
+After chart changes, run both `run_week()` (updates `output/` PNGs) and `render_week()` (updates `analysis.html`).
+
 ## Weeks
 
 | Date | Topic | Folder |
@@ -40,6 +42,7 @@ Or open `2026_06_16_uk_baby_names/analysis.qmd` and click **Render** in RStudio.
 ```
 tidytuesday/
 ├── tidytuesday.Rproj
+├── VIZ_LESSONS.md           # chart lessons fed to viz-rag
 ├── install_packages.R       # shared packages
 ├── run_week.R               # run any week folder
 ├── render_week.R            # render Quarto report for a week

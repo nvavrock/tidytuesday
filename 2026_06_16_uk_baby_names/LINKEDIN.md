@@ -43,9 +43,8 @@ Slope chart comparing baby name rank in 2024 vs 2025 for Daphne, Eloise, and Pen
 
 ## Before posting
 
-- [ ] Push this project to a public GitHub repo
-- [ ] Replace `[YOUR GITHUB REPO URL]` in the post
-- [ ] Attach 1–3 PNG files from `output/`
+- [x] Push this project to a public GitHub repo
+- [ ] Attach 1–3 PNG files from `output/` (run `run_week()` first so PNGs match the report)
 - [ ] Add alt text in LinkedIn's image description field
 - [ ] Optional: comment on the [TidyTuesday LinkedIn announcement](https://www.linkedin.com/in/lgibson7/)
 
