@@ -9,6 +9,57 @@ REGION_COLORS <- c(
   "Northern Ireland" = "#E69F00"
 )
 
+tt_theme <- function(base_size = 12) {
+  ggplot2::theme_minimal(base_size = base_size) +
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(face = "bold"),
+      strip.text = ggplot2::element_text(face = "bold")
+    )
+}
+
+as_interactive <- function(plot) {
+  if (!requireNamespace("plotly", quietly = TRUE)) {
+    return(plot)
+  }
+
+  px <- plotly::ggplotly(plot, tooltip = "text")
+
+  px$x$data <- lapply(px$x$data, function(trace) {
+    if (!identical(trace$type, "scatter") || is.null(trace$x)) {
+      return(trace)
+    }
+
+    x <- trace$x
+    y <- trace$y
+    if (is.list(x)) {
+      x <- unlist(x)
+    }
+    if (is.list(y)) {
+      y <- unlist(y)
+    }
+    keep <- !is.na(x) & !is.na(y)
+
+    if (any(!keep)) {
+      trace$x <- x[keep]
+      trace$y <- y[keep]
+      if (!is.null(trace$text)) {
+        trace$text <- unlist(trace$text)[keep]
+      }
+    }
+
+    trace_mode <- if (is.null(trace$mode)) "" else trace$mode
+    if (grepl("lines", trace_mode, fixed = TRUE) && length(trace$x) > 0) {
+      trace$mode <- "lines+markers"
+      trace$marker <- list(size = 4)
+    }
+
+    trace
+  })
+
+  px |>
+    plotly::layout(hovermode = "closest")
+}
+
 load_baby_names <- function(data_dir = "data") {
   england_wales <- readr::read_csv(
     file.path(data_dir, "england_wales_names.csv"),

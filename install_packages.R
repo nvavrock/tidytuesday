@@ -3,7 +3,10 @@
 pkgs <- c(
   "tidyverse",
   "scales",
-  "ggrepel"
+  "ggrepel",
+  "gganimate",
+  "gifski",
+  "plotly"
 )
 
 for (pkg in pkgs) {

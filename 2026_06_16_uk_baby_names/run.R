@@ -33,8 +33,8 @@ ggsave("output/01_regional_top_names.png", p_top, width = 9, height = 10, dpi = 
 ggsave("output/02_regional_overlap.png", p_overlap, width = 9, height = 6, dpi = 150)
 ggsave("output/03_uniqueness_over_time.png", p_unique_time, width = 10, height = 6, dpi = 150)
 ggsave("output/04_uniqueness_by_sex.png", p_unique_sex, width = 8, height = 6, dpi = 150)
-ggsave("output/05_bridgerton_trend.png", p_bridgerton, width = 9, height = 8, dpi = 150)
-ggsave("output/06_bridgerton_2024_2025.png", p_bridgerton_yoy, width = 8, height = 9, dpi = 150)
+ggsave("output/05_bridgerton_trend.png", p_bridgerton, width = 9, height = 11, dpi = 150)
+ggsave("output/06_bridgerton_2024_2025.png", p_bridgerton_yoy, width = 9, height = 11, dpi = 150)
 
 regional_summary <- summarise_regional_comparison(baby_names, year = comparison_year)
 uniqueness_summary <- summarise_uniqueness(uniqueness)

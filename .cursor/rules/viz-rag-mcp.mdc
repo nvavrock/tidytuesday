@@ -1,0 +1,16 @@
+---
+description: Use viz-rag MCP for ggplot2 and chart questions
+alwaysApply: true
+---
+
+# viz-rag (external MCP)
+
+This project uses the **viz-rag** corpus via MCP. The user talks only to you — not Gradio.
+
+For chart choice, ggplot2, faceting, scales, or TidyTuesday viz polish:
+
+1. Call **`search_viz_corpus`** on the `viz-rag` MCP server.
+2. Ground answers in returned chunks; cite `path` metadata.
+3. Combine with this repo's `R/` scripts when relevant.
+
+If MCP is unavailable, say so and check `C:\Users\me\Projects\tidytuesday\.cursor\mcp.json` and that viz-rag has a built `vector_db/`.

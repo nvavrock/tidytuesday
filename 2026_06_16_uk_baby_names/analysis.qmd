@@ -20,6 +20,7 @@ execute:
 source("../install_packages.R")
 
 library(tidyverse)
+library(plotly)
 
 source("R/load_data.R")
 source("R/01_regional_comparison.R")
@@ -39,6 +40,8 @@ comparison_year <- min(2024, max(baby_names$Year, na.rm = TRUE))
 
 Data from [TidyTuesday 2026-06-16](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16): baby names for England & Wales, Scotland, and Northern Ireland.
 
+Charts in this HTML report are **interactive** — hover bars, points, or tiles for exact counts and ranks. Static PNGs in `output/` (for LinkedIn) use the same styling but without tooltips.
+
 ---
 
 ## Angle 1: Regional comparison
@@ -46,11 +49,13 @@ Data from [TidyTuesday 2026-06-16](https://github.com/rfordatascience/tidytuesda
 How do the most popular names compare across the three UK regions?
 
 ```{r regional-top}
-plot_regional_top_names(baby_names, year = comparison_year)
+plot_regional_top_names(baby_names, year = comparison_year) |>
+  as_interactive()
 ```
 
 ```{r regional-overlap}
-plot_regional_overlap(baby_names, year = comparison_year)
+plot_regional_overlap(baby_names, year = comparison_year) |>
+  as_interactive()
 ```
 
 ```{r regional-table}
@@ -58,7 +63,7 @@ summarise_regional_comparison(baby_names, year = comparison_year) |>
   knitr::kable(caption = paste("Most popular name by region and sex,", comparison_year))
 ```
 
-**Takeaway:** Noah, Oliver, and Muhammad appear frequently in boys' top lists; girls' names show more regional variation. Names that land in multiple regional top-10 lists (e.g. Olivia, Isla) suggest shared cultural trends across the UK.
+**Takeaway:** Noah, Oliver, and Muhammad appear frequently in boys' top lists; girls' names show more regional variation. Names that land in multiple regional top-10 lists (e.g. Olivia, Isla) suggest shared cultural trends across the UK. The horizontal axis is the **count of babies given each name** in that region in `r comparison_year` — not a percentage. Each region panel uses its own scale because population sizes differ (England & Wales is much larger than Scotland or NI), so bar length is only comparable within a column, not across regions.
 
 ---
 
@@ -70,11 +75,13 @@ Are boys' or girls' names more unique? We measure:
 - **Share outside top 100** — higher means fewer parents pick ultra-common names
 
 ```{r uniqueness-time}
-plot_uniqueness_over_time(uniqueness)
+plot_uniqueness_over_time(uniqueness) |>
+  as_interactive()
 ```
 
 ```{r uniqueness-sex}
-plot_uniqueness_by_sex(uniqueness)
+plot_uniqueness_by_sex(uniqueness) |>
+  as_interactive()
 ```
 
 ```{r uniqueness-table}
@@ -91,11 +98,13 @@ summarise_uniqueness(uniqueness) |>
 National Records of Scotland reported that *Bridgerton* character names rose in 2025. Do we see the same in the data?
 
 ```{r bridgerton-trend}
-plot_bridgerton_trend(baby_names)
+plot_bridgerton_trend(baby_names, interactive = TRUE) |>
+  as_interactive()
 ```
 
 ```{r bridgerton-yoy}
-plot_bridgerton_2024_2025(baby_names)
+plot_bridgerton_2024_2025(baby_names) |>
+  as_interactive()
 ```
 
 ```{r bridgerton-table}
@@ -103,7 +112,7 @@ summarise_bridgerton(baby_names) |>
   knitr::kable(caption = "Bridgerton name ranks in 2024 vs 2025")
 ```
 
-**Takeaway:** In Scotland, Daphne jumped from 476th to 172nd, Eloise from 124th to 91st, and Penelope from 81st to 71st between 2024 and 2025 — a clear pop-culture bump. England & Wales data currently ends in 2024, so the 2025 Bridgerton spike is most visible in Scotland and Northern Ireland.
+**Takeaway:** In Scotland, Daphne jumped from 476th to 172nd, Eloise from 124th to 91st, and Penelope from 81st to 71st between 2024 and 2025 — a clear pop-culture bump. England & Wales data currently ends in 2024, so those panels show a single year with a "no 2025 data" label; Northern Ireland has gaps for some name–year combinations.
 
 ---
 

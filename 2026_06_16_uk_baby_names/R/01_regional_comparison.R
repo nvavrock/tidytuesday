@@ -6,7 +6,15 @@ plot_regional_top_names <- function(names, year = 2024, top_n = 10) {
     dplyr::filter(Year == year, !is.na(Rank), !is.na(Number)) |>
     dplyr::group_by(region, Sex) |>
     dplyr::slice_min(Rank, n = top_n, with_ties = FALSE) |>
-    dplyr::mutate(Name = forcats::fct_reorder(Name, Number)) |>
+    dplyr::mutate(
+      Name = forcats::fct_reorder(Name, Number),
+      hover = paste0(
+        "<b>", Name, "</b><br>",
+        region, " · ", Sex, "<br>",
+        "Count: ", scales::comma(Number), "<br>",
+        "Rank: ", Rank
+      )
+    ) |>
     dplyr::ungroup()
 
   top_names |>
@@ -14,7 +22,8 @@ plot_regional_top_names <- function(names, year = 2024, top_n = 10) {
       ggplot2::aes(
         x = Number,
         y = Name,
-        fill = Sex
+        fill = Sex,
+        text = hover
       )
     ) +
     ggplot2::geom_col() +
@@ -23,14 +32,22 @@ plot_regional_top_names <- function(names, year = 2024, top_n = 10) {
     ggplot2::scale_fill_manual(values = SEX_COLORS) +
     ggplot2::labs(
       title = paste("Top", top_n, "baby names by UK region,", year),
-      subtitle = "England & Wales data ends in 2024; Scotland and NI include 2025 in other charts",
-      x = NULL,
+      subtitle = paste(
+        "Bar length = babies given the name in that region;",
+        "each column has its own scale (regions differ in population)"
+      ),
+      x = "Babies given the name",
       y = NULL,
       fill = NULL,
       caption = DATA_SOURCE_CAPTION
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(legend.position = "none")
+    tt_theme() +
+    ggplot2::theme(
+      legend.position = "none",
+      panel.spacing.x = grid::unit(1.4, "cm"),
+      panel.spacing.y = grid::unit(0.6, "cm"),
+      axis.text.x = ggplot2::element_text(margin = ggplot2::margin(t = 4))
+    )
 }
 
 plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
@@ -45,8 +62,22 @@ plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
     dplyr::filter(regions_in_top >= 2) |>
     dplyr::left_join(
       top_by_region |>
-        dplyr::select(region, Sex, Name, Rank),
+        dplyr::select(region, Sex, Name, Rank, Number),
       by = c("Sex", "Name")
+    ) |>
+    dplyr::mutate(
+      regions_in_top = factor(regions_in_top, levels = c(2, 3)),
+      hover = paste0(
+        "<b>", Name, "</b><br>",
+        region, " · ", Sex, "<br>",
+        "Rank: ", Rank,
+        dplyr::if_else(
+          !is.na(Number),
+          paste0("<br>Count: ", scales::comma(Number)),
+          ""
+        ),
+        "<br>In ", regions_in_top, " regional top-", top_n, " lists"
+      )
     )
 
   if (nrow(overlap) == 0) {
@@ -64,24 +95,29 @@ plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
 
   overlap |>
     ggplot2::ggplot(
-      ggplot2::aes(x = region, y = reorder(Name, Rank), fill = regions_in_top)
+      ggplot2::aes(
+        x = region,
+        y = reorder(Name, Rank),
+        fill = regions_in_top,
+        text = hover
+      )
     ) +
     ggplot2::geom_tile(color = "white") +
     ggplot2::geom_text(ggplot2::aes(label = Rank), size = 3, color = "grey15") +
     ggplot2::facet_wrap(~ Sex, scales = "free_y") +
-    ggplot2::scale_fill_gradient(
+    ggplot2::scale_fill_manual(
       "Regions\nin top 10",
-      low = "#deebf7",
-      high = "#08519c"
+      values = c("2" = "#deebf7", "3" = "#08519c"),
+      labels = c("2" = "2 regions", "3" = "All 3 regions")
     ) +
     ggplot2::labs(
       title = paste("Names appearing in multiple regional top", top_n, "lists,", year),
-      subtitle = "Tile labels show rank within each region (1 = most popular)",
+      subtitle = "Tile labels = rank in that region; fill = how many regional top-10 lists include the name",
       x = NULL,
       y = NULL,
       caption = DATA_SOURCE_CAPTION
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
+    tt_theme() +
     ggplot2::theme(legend.position = "bottom")
 }
 
