@@ -25,8 +25,20 @@ as_interactive <- function(plot) {
   px <- plotly::ggplotly(plot, tooltip = "text")
 
   px$x$data <- lapply(px$x$data, function(trace) {
+    if (identical(trace$type, "box")) {
+      trace$showlegend <- FALSE
+      return(trace)
+    }
+
     if (!identical(trace$type, "scatter") || is.null(trace$x)) {
       return(trace)
+    }
+
+    trace_name <- if (is.null(trace$name)) "" else as.character(trace$name)
+    if (grepl(",", trace_name, fixed = TRUE)) {
+      region_label <- trimws(sub(".*,", "", trace_name))
+      trace$name <- region_label
+      trace$legendgroup <- region_label
     }
 
     x <- trace$x
@@ -55,6 +67,21 @@ as_interactive <- function(plot) {
 
     trace
   })
+
+  shown_legend_groups <- character(0)
+  for (i in seq_along(px$x$data)) {
+    trace <- px$x$data[[i]]
+    group <- trace$legendgroup
+    if (!is.null(group) && nzchar(group)) {
+      if (group %in% shown_legend_groups) {
+        trace$showlegend <- FALSE
+      } else {
+        trace$showlegend <- TRUE
+        shown_legend_groups <- c(shown_legend_groups, group)
+      }
+      px$x$data[[i]] <- trace
+    }
+  }
 
   px |>
     plotly::layout(hovermode = "closest")

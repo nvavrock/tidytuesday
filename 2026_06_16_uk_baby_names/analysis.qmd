@@ -80,7 +80,7 @@ plot_uniqueness_over_time(uniqueness) |>
 ```
 
 ```{r uniqueness-sex}
-plot_uniqueness_by_sex(uniqueness) |>
+plot_uniqueness_by_sex(uniqueness, interactive = TRUE) |>
   as_interactive()
 ```
 
@@ -116,10 +116,5 @@ summarise_bridgerton(baby_names) |>
 
 ---
 
-## Share your work
-
 - Hashtags: `#TidyTuesday` `#RStats` `#DataViz`
 - Credit: ONS, NISRA, National Records of Scotland via [TidyTuesday](https://tidytues.day)
-- Include alt text when posting charts on LinkedIn
-
-See `LINKEDIN.md` for a draft post.

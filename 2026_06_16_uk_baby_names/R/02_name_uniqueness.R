@@ -50,7 +50,7 @@ plot_uniqueness_over_time <- function(uniqueness) {
     ggplot2::theme(legend.position = "bottom")
 }
 
-plot_uniqueness_by_sex <- function(uniqueness, recent_years = 10) {
+plot_uniqueness_by_sex <- function(uniqueness, recent_years = 10, interactive = FALSE) {
   max_year <- max(uniqueness$Year, na.rm = TRUE)
   recent <- uniqueness |>
     dplyr::filter(Year >= max_year - recent_years + 1) |>
@@ -62,23 +62,48 @@ plot_uniqueness_by_sex <- function(uniqueness, recent_years = 10) {
       )
     )
 
-  recent |>
+  p <- recent |>
     ggplot2::ggplot(
       ggplot2::aes(
         x = Sex,
         y = pct_outside_top100,
-        fill = Sex,
         text = hover
       )
-    ) +
-    ggplot2::geom_boxplot(outlier.shape = NA, alpha = 0.35, width = 0.5) +
-    ggplot2::geom_jitter(
-      ggplot2::aes(color = region),
-      width = 0.12,
-      size = 2,
-      alpha = 0.85
-    ) +
-    ggplot2::scale_fill_manual(values = SEX_COLORS) +
+    )
+
+  if (interactive) {
+    p <- p +
+      ggplot2::geom_boxplot(
+        fill = "grey85",
+        color = "grey50",
+        outlier.shape = NA,
+        alpha = 0.5,
+        width = 0.5
+      ) +
+      ggplot2::geom_jitter(
+        ggplot2::aes(color = region),
+        width = 0.12,
+        size = 2,
+        alpha = 0.85
+      )
+  } else {
+    p <- p +
+      ggplot2::geom_boxplot(
+        ggplot2::aes(fill = Sex),
+        outlier.shape = NA,
+        alpha = 0.35,
+        width = 0.5
+      ) +
+      ggplot2::geom_jitter(
+        ggplot2::aes(color = region),
+        width = 0.12,
+        size = 2,
+        alpha = 0.85
+      ) +
+      ggplot2::scale_fill_manual(values = SEX_COLORS)
+  }
+
+  p +
     ggplot2::scale_color_manual(values = REGION_COLORS) +
     ggplot2::labs(
       title = paste(
