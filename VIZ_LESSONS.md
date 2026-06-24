@@ -116,3 +116,72 @@ scale_fill_manual(
 | Bar chart race | `2026_06_16_uk_baby_names/R/04_top10_race.R` |
 | plotly wrapper + bold theme | `2026_06_16_uk_baby_names/R/load_data.R` |
 | Discrete overlap heatmap legend | `2026_06_16_uk_baby_names/R/01_regional_comparison.R` |
+
+---
+
+## 2026-06-24 — Plotly PNG export, boxplot legend, LinkedIn carousel
+
+**Context:** `2026_06_16_uk_baby_names` — export interactive uniqueness chart to PNG for LinkedIn; fix plotly region legend on boxplot + jitter.
+
+### Static PNG from a plotly-ready ggplot (`save_interactive_png`)
+
+**Problem:** `04_uniqueness_by_sex.png` needs jitter tooltips and region colors like the HTML report, but LinkedIn cannot embed plotly.
+
+**Pattern:** render ggplot → `as_interactive()` → `htmlwidgets::saveWidget()` → `webshot2::webshot()` to PNG.
+
+```r
+save_interactive_png <- function(plot, path, width = 960, height = 720, zoom = 2) {
+  if (!requireNamespace("webshot2", quietly = TRUE) ||
+      !requireNamespace("htmlwidgets", quietly = TRUE)) {
+    ggplot2::ggsave(path, plot, width = width / 150, height = height / 150, dpi = 150)
+    return(invisible(path))
+  }
+  px <- as_interactive(plot) |> plotly::config(displayModeBar = FALSE)
+  tmp <- tempfile("plotly_widget_"); dir.create(tmp)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  htmlwidgets::saveWidget(px, file.path(tmp, "chart.html"), selfcontained = FALSE)
+  webshot2::webshot(file.path(tmp, "chart.html"), path,
+                    vwidth = width, vheight = height, zoom = zoom)
+}
+```
+
+- Add **webshot2** to `install_packages.R`; needs a headless browser (Chromium via webshot2).
+- Fallback to plain `ggsave()` when webshot2 is missing — chart still exports, without plotly polish.
+- Use in `run.R` only for charts that benefit from plotly (e.g. jitter hover); keep other slides as ggplot `ggsave()`.
+
+### ggplotly: boxplot + jitter legend
+
+**Symptoms:** duplicate legend entries; box traces labeled "1", "2"; region names buried in trace names like `"1, England & Wales"`.
+
+**Fixes in `as_interactive()`:**
+
+1. **Hide box from legend:** `if (trace$type == "box") trace$showlegend <- FALSE`
+2. **Parse region from jitter trace names:** if `grepl(",", trace$name)`, set `trace$name` to text after the comma and set `trace$legendgroup`
+3. **Dedupe legend:** track `shown_legend_groups`; set `showlegend = FALSE` on duplicate groups
+4. **Strip NA/null** from scatter trace `x`, `y`, `text` after `ggplotly()` — prevents invisible points
+5. **Layout:** `legend = list(orientation = "v", x = 1.02, xanchor = "left")` plus `plot.margin` right padding (~80pt) so legend is not clipped in PNG
+
+**ggplot side:** neutral grey `geom_boxplot(fill = "grey85")` + `geom_jitter(aes(color = region, text = hover))` — sex shown on x-axis, region on color, not fill.
+
+### LinkedIn carousel (static export)
+
+- **One headline per slide.** Three angles (regional, uniqueness, Bridgerton) = three slides; do not expect readers to find a second story (e.g. regional bands in jitter) unless the caption says so.
+- **Faceted bars with `scales = "free"`:** bar length is only comparable within a panel — say so in post text and alt text.
+- **Boxplot + jitter on a phone:** legend and overlapping points are cramped without hover; for feed-only posts consider dodged bars or `facet_wrap(~ region)`.
+- **Sparse line panels:** when one region lacks 2025 data, a **slope chart** (2024 vs 2025 ranks) tells the YoY story more directly than three line facets.
+- **Copy:** lead with one surprising number (e.g. #1 name); quantify each takeaway; invite criticism in one line if you want comments.
+- **Split audiences:** carousel = static highlights; GitHub Pages / `analysis.html` = hover, overlap heatmap, extra charts.
+
+### Diversity metric (for tooltips and captions)
+
+- `% outside top 100` = `sum(Number[Rank > 100 | is.na(Rank)]) / sum(Number)` per **region × year × sex**.
+- Rankings are **per region per year**, not pooled UK-wide.
+- `names_per_1000_births` = `n_distinct(Name) / total_births * 1000` — different lens than top-100 concentration.
+
+### Worked examples in this repo
+
+| Lesson | File |
+|--------|------|
+| `save_interactive_png` + `as_interactive` legend fix | `2026_06_16_uk_baby_names/R/load_data.R` |
+| Boxplot + jitter uniqueness chart | `2026_06_16_uk_baby_names/R/02_name_uniqueness.R` |
+| LinkedIn post draft + alt text | `2026_06_16_uk_baby_names/LINKEDIN.md` |
