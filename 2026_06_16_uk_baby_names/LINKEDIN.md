@@ -71,8 +71,8 @@ Slope chart comparing name rank in 2024 and 2025 by region. Downward lines mean 
 - [x] Push project to public GitHub repo
 - [x] Host interactive report on GitHub Pages
 - [x] Set report URL in post text
-- [ ] Upload carousel slides 1–3 from `output/` (in order above)
-- [ ] Paste alt text for each slide in LinkedIn's image description field
+- [x] Upload carousel slides 1–3 from `output/` (in order above)
+- [x] Paste alt text for each slide in LinkedIn's image description field
 - [ ] Optional: comment on the [TidyTuesday LinkedIn announcement](https://www.linkedin.com/in/lgibson7/)
 
 ---
