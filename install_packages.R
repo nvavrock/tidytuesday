@@ -6,7 +6,8 @@ pkgs <- c(
   "ggrepel",
   "gganimate",
   "gifski",
-  "plotly"
+  "plotly",
+  "webshot2"
 )
 
 for (pkg in pkgs) {

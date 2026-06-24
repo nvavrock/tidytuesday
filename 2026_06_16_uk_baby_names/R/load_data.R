@@ -84,7 +84,56 @@ as_interactive <- function(plot) {
   }
 
   px |>
-    plotly::layout(hovermode = "closest")
+    plotly::layout(
+      hovermode = "closest",
+      legend = list(
+        orientation = "v",
+        x = 1.02,
+        y = 1,
+        xanchor = "left",
+        yanchor = "top"
+      )
+    )
+}
+
+save_interactive_png <- function(
+    plot,
+    path,
+    width = 960,
+    height = 720,
+    zoom = 2
+) {
+  if (
+    !requireNamespace("webshot2", quietly = TRUE) ||
+      !requireNamespace("htmlwidgets", quietly = TRUE)
+  ) {
+    ggplot2::ggsave(
+      path,
+      plot,
+      width = width / 150,
+      height = height / 150,
+      dpi = 150
+    )
+    return(invisible(path))
+  }
+
+  px <- as_interactive(plot) |>
+    plotly::config(displayModeBar = FALSE, displaylogo = FALSE)
+
+  tmp_dir <- tempfile(pattern = "plotly_widget_")
+  dir.create(tmp_dir)
+  on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
+
+  html_path <- file.path(tmp_dir, "chart.html")
+  htmlwidgets::saveWidget(px, html_path, selfcontained = FALSE)
+  webshot2::webshot(
+    html_path,
+    path,
+    vwidth = width,
+    vheight = height,
+    zoom = zoom
+  )
+  invisible(path)
 }
 
 load_baby_names <- function(data_dir = "data") {

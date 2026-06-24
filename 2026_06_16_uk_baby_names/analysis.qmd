@@ -80,7 +80,7 @@ plot_uniqueness_over_time(uniqueness) |>
 ```
 
 ```{r uniqueness-sex}
-plot_uniqueness_by_sex(uniqueness, interactive = TRUE) |>
+plot_uniqueness_by_sex(uniqueness) |>
   as_interactive()
 ```
 
