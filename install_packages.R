@@ -4,8 +4,6 @@ pkgs <- c(
   "tidyverse",
   "scales",
   "ggrepel",
-  "gganimate",
-  "gifski",
   "plotly",
   "webshot2"
 )

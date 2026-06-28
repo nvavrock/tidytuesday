@@ -73,7 +73,8 @@ Slope chart comparing name rank in 2024 and 2025 by region. Downward lines mean 
 - [x] Set report URL in post text
 - [x] Upload carousel slides 1–3 from `output/` (in order above)
 - [x] Paste alt text for each slide in LinkedIn's image description field
-- [ ] Optional: comment on the [TidyTuesday LinkedIn announcement](https://www.linkedin.com/in/lgibson7/)
+- [x] Post published on LinkedIn
+- [ ] Optional: comment on the [TidyTuesday LinkedIn announcement](https://www.linkedin.com/in/lgibson7/) — skipped
 
 ---
 

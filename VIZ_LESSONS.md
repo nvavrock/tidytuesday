@@ -70,13 +70,7 @@ top_names |>
 
 ## 2026-06-23 — Animation, interactivity, and legend fixes
 
-**Context:** `2026_06_16_uk_baby_names` — bar chart race, plotly HTML report, overlap heatmap legend.
-
-### Bar chart race (gganimate)
-
-- Top-N race: map **rank to fixed y slots** (`slot = top_n + 1 - Rank`) so bars slide between positions; `transition_time(Year)`.
-- Scope one region for a clean series (England & Wales 1996–2024).
-- **gifski** `anim_save()` expects **pixels**: `width = width_in * dpi`, not inches.
+**Context:** `2026_06_16_uk_baby_names` — plotly HTML report, overlap heatmap legend.
 
 ### ggplotly gotchas (interactive HTML)
 
@@ -113,7 +107,6 @@ scale_fill_manual(
 
 | Lesson | File |
 |--------|------|
-| Bar chart race | `2026_06_16_uk_baby_names/R/04_top10_race.R` |
 | plotly wrapper + bold theme | `2026_06_16_uk_baby_names/R/load_data.R` |
 | Discrete overlap heatmap legend | `2026_06_16_uk_baby_names/R/01_regional_comparison.R` |
 
