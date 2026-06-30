@@ -56,7 +56,7 @@ source("render_week.R"); render_week("2026_06_16_uk_baby_names")
 Horizontal bar charts showing the top 10 baby names for boys and girls in England & Wales, Scotland, and Northern Ireland in 2024. Bar length is the count of babies given each name; each region uses its own scale.
 
 **Slide 2 — Name uniqueness:**  
-Box plot of the share of births with names outside the top 100, by sex, with points coloured by UK region (2016–2025). Girls consistently have a higher share of less common names.
+Box plot of the share of births with names outside the top 100, by sex, with points colored by UK region (2016–2025). Girls consistently have a higher share of less common names.
 
 **Slide 3 — Bridgerton trend:**  
 Line charts of baby name rank over time for Daphne, Eloise, and Penelope in England & Wales, Scotland, and Northern Ireland. Lower rank means more popular; Scotland shows a sharp rise around 2025.

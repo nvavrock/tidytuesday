@@ -65,8 +65,8 @@ plot_uniqueness_by_sex <- function(uniqueness, recent_years = 10) {
   recent |>
     ggplot2::ggplot(ggplot2::aes(x = Sex, y = pct_outside_top100)) +
     ggplot2::geom_boxplot(
-      fill = "grey85",
-      color = "grey50",
+      fill = "gray85",
+      color = "gray50",
       outlier.shape = NA,
       alpha = 0.5,
       width = 0.5

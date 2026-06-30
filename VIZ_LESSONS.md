@@ -74,7 +74,7 @@ top_names |>
 
 ### ggplotly gotchas (interactive HTML)
 
-- `ggplotly()` on faceted `geom_line()` can insert `null` between groups → invisible lines. Fix: explicit `group = Sex` (or colour variable) and strip `NA`/`null` from plotly trace data in `as_interactive()`.
+- `ggplotly()` on faceted `geom_line()` can insert `null` between groups → invisible lines. Fix: explicit `group = Sex` (or color variable) and strip `NA`/`null` from plotly trace data in `as_interactive()`.
 - Custom tooltips: build a `hover` string column, `aes(text = hover)`, then `ggplotly(..., tooltip = "text")`.
 - Skip `ggrepel` when converting to plotly (`interactive = TRUE`); use hover instead.
 - Static PNGs for LinkedIn stay ggplot-only; interactivity is for `analysis.html` only.
@@ -154,7 +154,7 @@ save_interactive_png <- function(plot, path, width = 960, height = 720, zoom = 2
 4. **Strip NA/null** from scatter trace `x`, `y`, `text` after `ggplotly()` — prevents invisible points
 5. **Layout:** `legend = list(orientation = "v", x = 1.02, xanchor = "left")` plus `plot.margin` right padding (~80pt) so legend is not clipped in PNG
 
-**ggplot side:** neutral grey `geom_boxplot(fill = "grey85")` + `geom_jitter(aes(color = region, text = hover))` — sex shown on x-axis, region on color, not fill.
+**ggplot side:** neutral gray `geom_boxplot(fill = "gray85")` + `geom_jitter(aes(color = region, text = hover))` — sex shown on x-axis, region on color, not fill.
 
 ### LinkedIn carousel (static export)
 
@@ -178,3 +178,101 @@ save_interactive_png <- function(plot, path, width = 960, height = 720, zoom = 2
 | `save_interactive_png` + `as_interactive` legend fix | `2026_06_16_uk_baby_names/R/load_data.R` |
 | Boxplot + jitter uniqueness chart | `2026_06_16_uk_baby_names/R/02_name_uniqueness.R` |
 | LinkedIn post draft + alt text | `2026_06_16_uk_baby_names/LINKEDIN.md` |
+
+---
+
+## 2026-06-23 — Text viz and small-sample ML (Papal Encyclicals)
+
+**Context:** `2026_06_23_papal_encyclicals` — tidytext tokenization, log-odds contrast, TF-IDF similarity, glmnet classifier on ~300 paragraphs.
+
+### Text charts (prefer bars over word clouds)
+
+- **Distinctive terms:** horizontal bar chart of log-odds ratio (positive = encyclical A, negative = encyclical B), not a word cloud — easier to read and label precisely.
+- **Top-N limits:** cap at 10–15 terms per side; filter low-frequency words (`>= 5` total occurrences) before ranking.
+- **Theme dictionary:** small hand-curated word lists (`tribble(theme, word)`) for narrative hooks; document the list in code, do not overfit with dozens of terms.
+
+### TF-IDF paragraph similarity
+
+- Tokenize once in `load_data.R` (`tokenize_paragraphs`); reuse for vocabulary, similarity, and classifier.
+- Build document-term matrix with `bind_tf_idf()` at paragraph `doc_id` level; cosine similarity between MH and RN paragraphs.
+- Scores stay modest (0.10–0.15) — frame as shared vocabulary, not semantic embeddings or direct quotation.
+
+### Small-sample classifier caveats
+
+- **Column name collision:** bag-of-words DTM columns can include common words like `pope` — rename label column (`pope_name`) before `inner_join()` so `select(-pope)` does not fail or drop the wrong column.
+- **Honest framing:** two documents from different eras; lasso coefficients load on topic words (labor vs technology), not abstract style. Report hold-out accuracy vs majority-class baseline.
+- **Scale fill labels:** if `if_else()` creates display labels like `"Leo XIV (2026)"`, manual scale names must match exactly — do not reuse short `POPE_COLORS` names without mapping.
+
+### Static-only week
+
+- Skip plotly/webshot2 when charts are bar/lollipop heavy; static PNGs are fine for report and LinkedIn.
+- Number outputs sequentially in `output/` (`01_…` through `07_…`) plus small summary CSVs for tables in Quarto.
+
+### Polish pass (takeaway titles + highlights)
+
+- **Title = insight**, subtitle = scope/caveat (FT-style from Week 24).
+- **Highlight key categories:** gray out "other" bars; color Leo XIII / Francis or flagship years (1891, 2026).
+- **Direct labels:** `geom_text` on bar ends and lollipop scores — skip legend hunting.
+- **Faceted log-odds:** split distinctive terms into two panels (`facet_wrap(~ lean, scales = "free_y")`) instead of one crowded diverging chart.
+- **Export:** `dpi = 300`, slightly wider margins via shared `tt_theme(base_size = 13)`.
+
+### Worked examples in this repo
+
+| Lesson | File |
+|--------|------|
+| Tokenization + TF-IDF helpers | `2026_06_23_papal_encyclicals/R/load_data.R` |
+| Log-odds vocabulary contrast | `2026_06_23_papal_encyclicals/R/03_vocabulary_evolution.R` |
+| Paragraph similarity lollipop | `2026_06_23_papal_encyclicals/R/04_text_similarity.R` |
+| glmnet + coefficient plot | `2026_06_23_papal_encyclicals/R/05_pope_classifier.R` |
+
+---
+
+## 2026-06-30 — Inside labels and week briefing notes
+
+**Context:** Papal encyclicals polish — flagship year names clipped at plot edges; count labels floating outside bars.
+
+### Keep labels inside the plot
+
+**Symptom:** `annotate()` with `hjust = c(1.05, -0.05)` or `geom_text(hjust = -0.15)` pushes text past the panel; names truncate on export (e.g. “*rum Novarum*”).
+
+**Fixes:**
+
+- **Vertical bars:** place counts with `vjust = 1.35` on `y = n` (inside top of bar); use white text on saturated fills.
+- **Horizontal bars:** `aes(x = n, label = n)` + `hjust = 1.05` (inside right end); white on highlight fills, `gray30` on gray bars.
+- **Flagship annotations:** join a small data frame and use `geom_text(aes(y = pmax(n * 0.55, 0.65), ...))` centered on the bar instead of `annotate()` at the panel edge.
+- **Lollipop scores:** label at `x = similarity * 0.92`, `hjust = 1`, dark text on the segment — not past the point.
+- **Axis expand:** reduce outer margin (`expansion(mult = c(0, 0.06))`) once labels are inside; avoid compensating with huge right padding.
+
+```r
+geom_text(
+  data = flagship,
+  aes(x = year, y = pmax(n * 0.55, 0.65), label = name),
+  inherit.aes = FALSE,
+  hjust = 0.5, vjust = 0.5, color = "white"
+)
+```
+
+### Week briefing notes (`NOTES.md`)
+
+Each week folder should include **`NOTES.md`** — layman's briefing for non-technical readers:
+
+1. **What this project is about** (one short paragraph)
+2. **Key terms** (table)
+3. **Charts** — one block per PNG: what it shows, story, caveats
+4. **One-sentence elevator pitch**
+5. **How to regenerate**
+
+Copy the structure from `2026_06_16_uk_baby_names/NOTES.md` or `2026_06_23_papal_encyclicals/NOTES.md` when adding a new week.
+
+### American English in user-facing text
+
+- Chart titles, subtitles, `NOTES.md`, and `VIZ_LESSONS.md` prose: **American** spelling (`labor`, `color`, `gray`).
+- Keep tidyverse function names (`summarise`, `color = "gray80"`) — package conventions, not copy editing.
+
+### Worked examples in this repo
+
+| Lesson | File |
+|--------|------|
+| Inside bar + flagship labels | `2026_06_23_papal_encyclicals/R/01_encyclical_output.R` |
+| Week briefing template | `2026_06_23_papal_encyclicals/NOTES.md` |
+| Week briefing template | `2026_06_16_uk_baby_names/NOTES.md` |

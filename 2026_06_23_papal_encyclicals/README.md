@@ -1,6 +1,6 @@
-# UK Baby Names — TidyTuesday 2026-06-16
+# Papal Encyclicals — TidyTuesday 2026-06-23
 
-Week 24 analysis: baby names across England & Wales, Scotland, and Northern Ireland.
+Week 25 analysis: papal encyclicals from the Industrial Revolution to the AI Revolution.
 
 ## Run
 
@@ -8,7 +8,7 @@ From project root:
 
 ```r
 source("run_week.R")
-run_week("2026_06_16_uk_baby_names")
+run_week("2026_06_23_papal_encyclicals")
 ```
 
 Or from this folder:
@@ -24,18 +24,17 @@ Open [analysis.html](analysis.html) in a browser, open `analysis.qmd` and click 
 
 ```r
 source("render_week.R")
-render_week("2026_06_16_uk_baby_names")
+render_week("2026_06_23_papal_encyclicals")
 ```
 
 ## Outputs
 
-- `output/` — 6 charts + 3 summary CSVs
+- `output/` — 8 charts + 4 summary CSVs
 - `analysis.qmd` / `analysis.html` — full report
 - `NOTES.md` — plain-language briefing for sharing with non-technical readers
-- `LINKEDIN.md` — draft social post
 
 ## Data
 
-Official dataset: https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-16
+Official dataset: https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-23
 
 Local copies in `data/`.

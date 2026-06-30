@@ -103,7 +103,7 @@ plot_regional_overlap <- function(names, year = 2024, top_n = 10) {
       )
     ) +
     ggplot2::geom_tile(color = "white") +
-    ggplot2::geom_text(ggplot2::aes(label = Rank), size = 3, color = "grey15") +
+    ggplot2::geom_text(ggplot2::aes(label = Rank), size = 3, color = "gray15") +
     ggplot2::facet_wrap(~ Sex, scales = "free_y") +
     ggplot2::scale_fill_manual(
       "Regions\nin top 10",

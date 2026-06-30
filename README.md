@@ -1,6 +1,6 @@
 # TidyTuesday
 
-Personal R analyses for the weekly [#TidyTuesday](https://tidytues.day) social data project.
+Personal R analysis projects for the weekly [#TidyTuesday](https://tidytues.day) social data project.
 
 Official datasets: [rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday)
 
@@ -36,6 +36,7 @@ After chart changes, run both `run_week()` (updates `output/` PNGs) and `render_
 | Date | Topic | Folder |
 |------|-------|--------|
 | 2026-06-16 | UK Baby Names | [2026_06_16_uk_baby_names/](2026_06_16_uk_baby_names/) |
+| 2026-06-23 | Papal Encyclicals | [2026_06_23_papal_encyclicals/](2026_06_23_papal_encyclicals/) |
 
 ## Project layout
 
@@ -49,12 +50,13 @@ tidytuesday/
 └── 2026_06_16_uk_baby_names/
     ├── run.R
     ├── analysis.qmd
+    ├── NOTES.md               # layman's briefing for sharing
     ├── data/
     ├── output/
     └── R/
 ```
 
-Add future weeks as sibling folders (e.g. `2026_06_23_next_topic/`).
+Add future weeks as sibling folders (e.g. `2026_06_23_next_topic/`). Each week should include **`NOTES.md`** — a plain-language briefing (what the project is, chart guide, key terms). See an existing week folder for the template.
 
 ## Visualization lessons (viz-rag)
 

@@ -237,7 +237,7 @@ plot_bridgerton_2024_2025 <- function(names, rank_cap = 600) {
       strip.placement = "outside",
       plot.caption = ggplot2::element_text(
         size = 9,
-        color = "grey30",
+        color = "gray30",
         hjust = 0,
         lineheight = 1.25,
         margin = ggplot2::margin(t = 10)

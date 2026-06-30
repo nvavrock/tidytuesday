@@ -5,7 +5,10 @@ pkgs <- c(
   "scales",
   "ggrepel",
   "plotly",
-  "webshot2"
+  "webshot2",
+  "tidytext",
+  "stopwords",
+  "glmnet"
 )
 
 for (pkg in pkgs) {
