@@ -22,10 +22,6 @@ plot_encyclical_output_over_time <- function(papal_encyclicals) {
         year == 1891L ~ "Rerum Novarum",
         year == 2026L ~ "Magnifica Humanitas"
       ),
-      name_color = dplyr::case_when(
-        year == 1891L ~ ENCYCLICAL_COLORS[["Rerum Novarum"]],
-        year == 2026L ~ ENCYCLICAL_COLORS[["Magnifica Humanitas"]]
-      ),
       label_x = dplyr::case_when(
         year == 1891L ~ year + 1.5,
         year == 2026L ~ year - 1.5
@@ -58,15 +54,15 @@ plot_encyclical_output_over_time <- function(papal_encyclicals) {
     ) +
     ggplot2::geom_text(
       data = flagship,
-      ggplot2::aes(x = label_x, y = label_y, label = name, color = name_color, hjust = label_hjust),
+      ggplot2::aes(x = label_x, y = label_y, label = name, hjust = label_hjust),
       inherit.aes = FALSE,
       vjust = 0,
       size = 2.8,
-      fontface = "italic",
+      fontface = "bold",
       lineheight = 0.9,
+      color = "black",
       show.legend = FALSE
     ) +
-    ggplot2::scale_color_identity() +
     ggplot2::scale_fill_manual(values = FLAGSHIP_YEAR_COLORS, name = NULL) +
     ggplot2::scale_x_continuous(
       breaks = seq(1880, 2020, by = 20),
