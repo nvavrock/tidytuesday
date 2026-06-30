@@ -28,6 +28,7 @@ source("R/02_scripture_emphasis.R")
 source("R/03_vocabulary_evolution.R")
 source("R/04_text_similarity.R")
 source("R/05_pope_classifier.R")
+source("R/save_plots.R")
 
 dir.create("output", showWarnings = FALSE)
 
@@ -40,9 +41,20 @@ encyclicals <- data$encyclicals
 papal_encyclicals <- data$papal_encyclicals
 scripture_references <- data$scripture_references
 tokens <- tokenize_paragraphs(encyclicals)
+
+results <- save_week_plots(
+  papal_encyclicals,
+  scripture_references,
+  tokens,
+  encyclicals
+)
+similarity <- results$similarity
+classifier <- results$classifier
 ```
 
 Data from [TidyTuesday 2026-06-23](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-23): paragraph text from *Rerum Novarum* (1891) and *Magnifica Humanitas* (2026), a catalog of 213 papal encyclicals, and scripture citations extracted from both texts.
+
+Charts below are the same static PNGs saved to `output/` by `run.R` — black value labels sit just outside each bar.
 
 > "Humanity, created by God in all its grandeur, is today facing a pivotal choice: either to construct a new Tower of Babel or to build the city in which God and humanity dwell together." — Pope Leo XIV, *Magnifica Humanitas* §1
 
@@ -53,11 +65,11 @@ Data from [TidyTuesday 2026-06-23](https://github.com/rfordatascience/tidytuesda
 How has papal encyclical output changed from 1878 to 2026?
 
 ```{r output-time}
-plot_encyclical_output_over_time(papal_encyclicals)
+knitr::include_graphics("output/01_encyclical_output_over_time.png")
 ```
 
 ```{r output-pope}
-plot_encyclicals_per_pope(papal_encyclicals)
+knitr::include_graphics("output/02_encyclicals_per_pope.png")
 ```
 
 ```{r output-table}
@@ -75,11 +87,11 @@ summarise_encyclical_output(papal_encyclicals) |>
 Which books of the Bible does each pope cite, and what does that reveal about theological emphasis?
 
 ```{r scripture-testament}
-plot_scripture_testament(scripture_references)
+knitr::include_graphics("output/03_scripture_testament.png")
 ```
 
 ```{r scripture-books}
-plot_scripture_books(scripture_references)
+knitr::include_graphics("output/04_scripture_books.png")
 ```
 
 ```{r scripture-table}
@@ -96,11 +108,11 @@ summarise_scripture(scripture_references) |>
 How does the vocabulary of Catholic Social Teaching evolve from the Industrial Revolution to the AI Revolution?
 
 ```{r vocabulary}
-plot_vocabulary_contrast(tokens)
+knitr::include_graphics("output/05_vocabulary_contrast.png")
 ```
 
 ```{r theme-words}
-plot_theme_words(tokens)
+knitr::include_graphics("output/05b_theme_words.png")
 ```
 
 ```{r theme-words-table}
@@ -117,8 +129,7 @@ summarise_theme_words(tokens) |>
 Which passages of *Magnifica Humanitas* are most textually similar to *Rerum Novarum*?
 
 ```{r similarity}
-similarity <- compute_paragraph_similarity(encyclicals, tokens)
-plot_text_similarity(similarity)
+knitr::include_graphics("output/06_text_similarity.png")
 ```
 
 ```{r similarity-table}
@@ -135,8 +146,7 @@ summarise_text_similarity(similarity) |>
 Can a model reliably distinguish which pope wrote a paragraph?
 
 ```{r classifier}
-classifier <- fit_pope_classifier(encyclicals, tokens)
-plot_classifier_coefficients(classifier)
+knitr::include_graphics("output/07_classifier_coefficients.png")
 ```
 
 ```{r classifier-table}

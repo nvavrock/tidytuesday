@@ -43,7 +43,6 @@ After chart changes, run both `run_week()` (updates `output/` PNGs) and `render_
 ```
 tidytuesday/
 ├── tidytuesday.Rproj
-├── VIZ_LESSONS.md           # chart lessons fed to viz-rag
 ├── install_packages.R       # shared packages
 ├── run_week.R               # run any week folder
 ├── render_week.R            # render Quarto report for a week
@@ -57,20 +56,6 @@ tidytuesday/
 ```
 
 Add future weeks as sibling folders (e.g. `2026_06_23_next_topic/`). Each week should include **`NOTES.md`** — a plain-language briefing (what the project is, chart guide, key terms). See an existing week folder for the template.
-
-## Visualization lessons (viz-rag)
-
-Chart lessons from this repo feed the separate [viz-rag](https://github.com/nvavrock/viz-rag) retrieval corpus.
-
-1. After improving charts, add a dated entry to [`VIZ_LESSONS.md`](VIZ_LESSONS.md) (what went wrong, what fixed it, link to the R file).
-2. From the `viz-rag` repo, rebuild and re-embed:
-
-```bash
-python ingest/build_corpus.py
-.venv\Scripts\python.exe -m rag.ingest
-```
-
-viz-rag ingests `VIZ_LESSONS.md`, week `R/*.R` plot functions, and its own `corpus/lessons/CHANGELOG.md`.
 
 ## Contributing
 

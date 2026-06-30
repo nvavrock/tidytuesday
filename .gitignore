@@ -15,6 +15,10 @@ _site/
 .cursor/*
 !.cursor/rules/
 !.cursor/rules/**
+.cursor/rules/viz-rag-mcp.mdc
+
+# Private local viz-rag corpus (ingested by separate viz-rag repo; not published)
+VIZ_LESSONS.md
 
 # LLM/editor session artifacts
 .claude/

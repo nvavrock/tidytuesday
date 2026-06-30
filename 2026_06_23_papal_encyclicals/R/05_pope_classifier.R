@@ -70,7 +70,7 @@ plot_classifier_coefficients <- function(classifier, top_n = 10) {
         sprintf("%.2f", coefficient),
         ""
       ),
-      hjust = dplyr::if_else(coefficient > 0, 0.92, 1.08)
+      hjust = dplyr::if_else(coefficient > 0, -0.25, 1.25)
     )
 
   acc_pct <- round(classifier$accuracy * 100, 1)
@@ -83,10 +83,11 @@ plot_classifier_coefficients <- function(classifier, top_n = 10) {
       ggplot2::aes(label = label, hjust = hjust),
       size = 2.8,
       fontface = "bold",
-      color = "gray25",
+      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::geom_vline(xintercept = 0, color = "gray50", linewidth = 0.4) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0.06, 0.08))) +
     ggplot2::scale_fill_manual(
       values = c(
         "Leo XIV (2026)" = POPE_COLORS[["Leo XIV"]],
@@ -104,7 +105,11 @@ plot_classifier_coefficients <- function(classifier, top_n = 10) {
       caption = DATA_SOURCE_CAPTION
     ) +
     tt_theme() +
-    ggplot2::theme(legend.position = "bottom")
+    ggplot2::coord_cartesian(clip = "off") +
+    ggplot2::theme(
+      legend.position = "bottom",
+      plot.margin = ggplot2::margin(12, 24, 12, 12)
+    )
 }
 
 summarise_classifier <- function(classifier) {

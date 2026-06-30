@@ -78,11 +78,11 @@ plot_text_similarity <- function(similarity_df) {
     ) +
     ggplot2::geom_point(size = 4) +
     ggplot2::geom_text(
-      ggplot2::aes(x = similarity * 0.92, label = sprintf("%.2f", similarity)),
-      hjust = 1,
+      ggplot2::aes(x = similarity, label = sprintf("%.2f", similarity)),
+      hjust = -0.25,
       size = 3.2,
       fontface = "bold",
-      color = "gray20",
+      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::scale_color_gradient(
@@ -92,7 +92,7 @@ plot_text_similarity <- function(similarity_df) {
     ) +
     ggplot2::scale_x_continuous(
       limits = c(0, NA),
-      expand = ggplot2::expansion(mult = c(0, 0.08))
+      expand = ggplot2::expansion(mult = c(0.02, 0.12))
     ) +
     ggplot2::labs(
       title = "Several MH paragraphs echo RN on dignity and social order",
@@ -101,7 +101,9 @@ plot_text_similarity <- function(similarity_df) {
       y = NULL,
       caption = DATA_SOURCE_CAPTION
     ) +
-    tt_theme()
+    tt_theme() +
+    ggplot2::coord_cartesian(clip = "off") +
+    ggplot2::theme(plot.margin = ggplot2::margin(12, 24, 12, 12))
 }
 
 summarise_text_similarity <- function(similarity_df) {

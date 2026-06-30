@@ -10,17 +10,17 @@ plot_scripture_testament <- function(scripture_references) {
     ggplot2::geom_text(
       ggplot2::aes(label = n, y = n),
       position = ggplot2::position_dodge(width = 0.65),
-      vjust = 1.35,
+      vjust = -0.25,
       size = 3.5,
       fontface = "bold",
-      color = "gray20",
+      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::scale_fill_manual(
       values = c("Old Testament" = "#56B4E9", "New Testament" = "#E69F00"),
       name = NULL
     ) +
-    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.08))) +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.12))) +
     ggplot2::labs(
       title = "Leo XIV cites more Old Testament books than Leo XIII",
       subtitle = "Biblical citations in Rerum Novarum (1891) vs Magnifica Humanitas (2026)",
@@ -29,6 +29,7 @@ plot_scripture_testament <- function(scripture_references) {
       caption = DATA_SOURCE_CAPTION
     ) +
     tt_theme() +
+    ggplot2::coord_cartesian(clip = "off") +
     ggplot2::theme(legend.position = "bottom")
 }
 
@@ -47,14 +48,14 @@ plot_scripture_books <- function(scripture_references, top_n = 5) {
     ggplot2::geom_col(alpha = 0.92, width = 0.75, show.legend = FALSE) +
     ggplot2::geom_text(
       ggplot2::aes(x = n, label = n),
-      hjust = 1.05,
+      hjust = -0.25,
       size = 3.2,
       fontface = "bold",
-      color = "white"
+      color = "black"
     ) +
     ggplot2::facet_wrap(~ pope, scales = "free_y") +
     ggplot2::scale_fill_manual(values = POPE_COLORS) +
-    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.06))) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.08))) +
     ggplot2::labs(
       title = paste("Most cited books of the Bible (top", top_n, "per pope)"),
       subtitle = "RN citations partly manual; MH citations regex-extracted from text",
@@ -62,7 +63,9 @@ plot_scripture_books <- function(scripture_references, top_n = 5) {
       y = NULL,
       caption = DATA_SOURCE_CAPTION
     ) +
-    tt_theme()
+    tt_theme() +
+    ggplot2::coord_cartesian(clip = "off") +
+    ggplot2::theme(plot.margin = ggplot2::margin(12, 24, 12, 12))
 }
 
 summarise_scripture <- function(scripture_references) {

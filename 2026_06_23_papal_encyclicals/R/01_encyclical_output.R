@@ -50,10 +50,10 @@ plot_encyclical_output_over_time <- function(papal_encyclicals) {
       data = flagship,
       ggplot2::aes(x = year, y = n, label = n),
       inherit.aes = FALSE,
-      vjust = 1.35,
+      vjust = -0.25,
       size = 3.2,
       fontface = "bold",
-      color = "white",
+      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::geom_text(
@@ -102,7 +102,6 @@ plot_encyclicals_per_pope <- function(papal_encyclicals, top_n = 12) {
         pope == "Francis" ~ "Francis",
         TRUE ~ "Other"
       ),
-      label_color = dplyr::if_else(highlight == "Other", "gray30", "white"),
       pope = forcats::fct_reorder(pope, n)
     )
 
@@ -110,17 +109,17 @@ plot_encyclicals_per_pope <- function(papal_encyclicals, top_n = 12) {
     ggplot2::ggplot(ggplot2::aes(x = n, y = pope, fill = highlight)) +
     ggplot2::geom_col(alpha = 0.92, width = 0.75) +
     ggplot2::geom_text(
-      ggplot2::aes(x = n, label = n, color = label_color),
-      hjust = 1.05,
+      ggplot2::aes(x = n, label = n),
+      hjust = -0.25,
       size = 3.2,
       fontface = "bold",
+      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::scale_fill_manual(values = POPE_HIGHLIGHT_COLORS, name = NULL) +
-    ggplot2::scale_color_identity() +
     ggplot2::scale_x_continuous(
       breaks = scales::breaks_pretty(),
-      expand = ggplot2::expansion(mult = c(0, 0.06))
+      expand = ggplot2::expansion(mult = c(0, 0.08))
     ) +
     ggplot2::labs(
       title = "Leo XIII wrote 86 encyclicals; Francis wrote 4",
@@ -132,7 +131,11 @@ plot_encyclicals_per_pope <- function(papal_encyclicals, top_n = 12) {
       caption = DATA_SOURCE_CAPTION
     ) +
     tt_theme() +
-    ggplot2::theme(legend.position = "bottom")
+    ggplot2::coord_cartesian(clip = "off") +
+    ggplot2::theme(
+      legend.position = "bottom",
+      plot.margin = ggplot2::margin(12, 24, 12, 12)
+    )
 }
 
 summarise_encyclical_output <- function(papal_encyclicals) {

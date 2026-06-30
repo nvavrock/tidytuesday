@@ -101,14 +101,14 @@ plot_theme_words <- function(tokens) {
     ggplot2::geom_text(
       ggplot2::aes(x = n, label = dplyr::if_else(n > 0, as.character(n), "")),
       position = ggplot2::position_dodge(width = 0.7),
-      hjust = 1.05,
+      hjust = -0.25,
       size = 3.2,
       fontface = "bold",
-      color = "white",
+      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::scale_fill_manual(values = ENCYCLICAL_COLORS, name = NULL) +
-    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.06))) +
+    ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = c(0, 0.08))) +
     ggplot2::labs(
       title = "Theme words shift from labor to technology",
       subtitle = "Hand-curated dictionary: labor, dignity, and AI-related terms",
@@ -117,5 +117,9 @@ plot_theme_words <- function(tokens) {
       caption = DATA_SOURCE_CAPTION
     ) +
     tt_theme() +
-    ggplot2::theme(legend.position = "bottom")
+    ggplot2::coord_cartesian(clip = "off") +
+    ggplot2::theme(
+      legend.position = "bottom",
+      plot.margin = ggplot2::margin(12, 24, 12, 12)
+    )
 }
