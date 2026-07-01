@@ -63,8 +63,8 @@ Grouped bar chart of counts for hand-picked theme words (dignity, labor, technol
 
 ## Before posting
 
-- [ ] Push project to public GitHub repo
-- [ ] Host report on GitHub Pages; confirm URL loads
+- [x] Push project to public GitHub repo
+- [x] Host report on GitHub Pages; confirm URL loads
 - [ ] Upload carousel slides 1–3 from `output/` (in order above)
 - [ ] Paste alt text for each slide in LinkedIn's image description field
 - [ ] Post published on LinkedIn
