@@ -2,7 +2,7 @@
 
 Plain-language guide for sharing this project with people who are not data scientists.
 
-**Interactive report:** [analysis.html](analysis.html)  
+**Full report:** [analysis.html](analysis.html) (static charts; same PNGs as `output/`)  
 **Data source:** [TidyTuesday](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-23) · Vatican.va · curated by Tony Galvan
 
 ---
@@ -34,8 +34,8 @@ An **encyclical** is a formal letter from a Pope to the whole Church on an impor
 
 ### `01_encyclical_output_over_time.png`
 **What:** How many encyclicals were published each year since 1878.  
-**Story:** Output was highest in the late 1800s and early 1900s. Orange bars mark the two encyclicals we study (1891 and 2026).  
-**Caveat:** Modern Popes also teach through speeches, tweets, and other formats not in this catalog.
+**Story:** Output was highest in the late 1800s and early 1900s. Orange bars mark the two encyclicals we study (1891 and 2026); *Rerum Novarum* and *Magnifica Humanitas* are labeled in bold italic beside the dashed lines.  
+**Caveat:** Y-axis uses whole-number ticks (0, 2, 4, 8) up to 10. Modern Popes also teach through speeches, tweets, and other formats not in this catalog.
 
 ### `02_encyclicals_per_pope.png`
 **What:** Total encyclicals per Pope (top 12).  
@@ -84,6 +84,8 @@ An **encyclical** is a formal letter from a Pope to the whole Church on an impor
 ---
 
 ## How to regenerate
+
+Run charts first, then render the HTML report (same PNGs appear in `analysis.html`):
 
 ```r
 source("run_week.R"); run_week("2026_06_23_papal_encyclicals")

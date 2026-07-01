@@ -29,8 +29,8 @@ render_week("2026_06_16_uk_baby_names")
 
 ## Outputs
 
-- `output/` — 6 charts + 3 summary CSVs
-- `analysis.qmd` / `analysis.html` — full report
+- `output/` — 6 charts + 3 summary CSVs (static PNGs for LinkedIn)
+- `analysis.qmd` / `analysis.html` — interactive report (plotly hover)
 - `NOTES.md` — plain-language briefing for sharing with non-technical readers
 - `LINKEDIN.md` — draft social post
 

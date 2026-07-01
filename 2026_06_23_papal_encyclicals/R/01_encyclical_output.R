@@ -30,16 +30,17 @@ plot_encyclical_output_over_time <- function(papal_encyclicals) {
         year == 1891L ~ 0,
         year == 2026L ~ 1
       ),
-      label_y = n + y_max * 0.06
+      label_y = n + y_max * 0.18
     )
 
   by_year |>
     ggplot2::ggplot(ggplot2::aes(x = year, y = n, fill = year_type)) +
     ggplot2::geom_col(width = 1, alpha = 0.92) +
     ggplot2::geom_vline(
-      xintercept = flagship_years,
+      data = flagship,
+      ggplot2::aes(xintercept = year, color = name),
+      inherit.aes = FALSE,
       linetype = "dashed",
-      color = "gray30",
       linewidth = 0.5
     ) +
     ggplot2::geom_text(
@@ -54,23 +55,24 @@ plot_encyclical_output_over_time <- function(papal_encyclicals) {
     ) +
     ggplot2::geom_text(
       data = flagship,
-      ggplot2::aes(x = label_x, y = label_y, label = name, hjust = label_hjust),
+      ggplot2::aes(x = label_x, y = label_y, label = name, hjust = label_hjust, color = name),
       inherit.aes = FALSE,
       vjust = 0,
-      size = 2.8,
-      fontface = "bold",
+      size = 4.2,
+      fontface = "bold.italic",
       lineheight = 0.9,
-      color = "black",
       show.legend = FALSE
     ) +
     ggplot2::scale_fill_manual(values = FLAGSHIP_YEAR_COLORS, name = NULL) +
+    ggplot2::scale_color_manual(values = FLAGSHIP_ANNOTATION_COLORS, guide = "none") +
     ggplot2::scale_x_continuous(
       breaks = seq(1880, 2020, by = 20),
       limits = c(1876, 2028),
       expand = ggplot2::expansion(mult = c(0.01, 0.01))
     ) +
     ggplot2::scale_y_continuous(
-      limits = c(0, y_max * 1.2),
+      limits = c(0, 10),
+      breaks = c(0, 2, 4, 8),
       expand = ggplot2::expansion(mult = c(0, 0))
     ) +
     ggplot2::coord_cartesian(clip = "off") +

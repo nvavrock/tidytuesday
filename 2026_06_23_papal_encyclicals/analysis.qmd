@@ -54,7 +54,7 @@ classifier <- results$classifier
 
 Data from [TidyTuesday 2026-06-23](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-23): paragraph text from *Rerum Novarum* (1891) and *Magnifica Humanitas* (2026), a catalog of 213 papal encyclicals, and scripture citations extracted from both texts.
 
-Charts below are the same static PNGs saved to `output/` by `run.R` — black value labels sit just outside each bar.
+Charts below are the static PNGs saved to `output/` by `run.R` — same files used for LinkedIn and slides.
 
 > "Humanity, created by God in all its grandeur, is today facing a pivotal choice: either to construct a new Tower of Babel or to build the city in which God and humanity dwell together." — Pope Leo XIV, *Magnifica Humanitas* §1
 

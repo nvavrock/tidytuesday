@@ -15,6 +15,7 @@ LLM assistance is fine. Committing unreviewed model output is not.
 ### Quality and hygiene
 
 - Match existing project style: tidyverse pipelines, week folders, `run.R` / `analysis.qmd` / `NOTES.md` patterns, minimal comments.
+- Papal encyclicals week: `analysis.qmd` embeds PNGs from `output/` via `save_plots.R`; UK baby names week uses plotly in HTML. Run `run_week()` before `render_week()` when charts change.
 - Do not leave LLM artifacts in the tree: debug logging, `#region agent log` blocks, temporary path hacks, or narrating comments that restate the code.
 - Do not commit editor or LLM session files (for example `.cursor/debug*.log`, `.claude/`, local `.git_commit_msg.txt`). Project Cursor rules under `.cursor/rules/` are intentional and may be committed.
 

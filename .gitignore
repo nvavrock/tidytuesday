@@ -23,3 +23,13 @@ VIZ_LESSONS.md
 # LLM/editor session artifacts
 .claude/
 .git_commit_msg.txt
+
+# Orphan plotly widget assets (papal week uses static PNG embeds only)
+2026_06_23_papal_encyclicals/analysis_files/libs/crosstalk-1.2.2/
+2026_06_23_papal_encyclicals/analysis_files/libs/htmltools-fill-0.5.9/
+2026_06_23_papal_encyclicals/analysis_files/libs/htmlwidgets-1.6.4/
+2026_06_23_papal_encyclicals/analysis_files/libs/jquery-3.5.1/
+2026_06_23_papal_encyclicals/analysis_files/libs/plotly-binding-4.11.0/
+2026_06_23_papal_encyclicals/analysis_files/libs/plotly-htmlwidgets-css-2.11.1/
+2026_06_23_papal_encyclicals/analysis_files/libs/plotly-main-2.11.1/
+2026_06_23_papal_encyclicals/analysis_files/libs/typedarray-0.1/

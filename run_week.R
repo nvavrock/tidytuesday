@@ -13,7 +13,7 @@ run_week <- function(week_dir = "2026_06_16_uk_baby_names") {
   source("run.R")
 
   cat(
-    "\nNext — interactive HTML (from project root, not this folder):\n",
+    "\nNext — render HTML report (from project root, not this folder):\n",
     "  source(\"render_week.R\")\n",
     "  render_week(\"", week_dir, "\")\n",
     sep = ""

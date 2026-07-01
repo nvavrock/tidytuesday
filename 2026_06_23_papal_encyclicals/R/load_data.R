@@ -23,6 +23,11 @@ FLAGSHIP_YEAR_COLORS <- c(
   "Other years" = "#56B4E9"
 )
 
+FLAGSHIP_ANNOTATION_COLORS <- c(
+  "Rerum Novarum" = "#882255",
+  "Magnifica Humanitas" = "#117733"
+)
+
 tt_theme <- function(base_size = 13) {
   ggplot2::theme_minimal(base_size = base_size) +
     ggplot2::theme(
