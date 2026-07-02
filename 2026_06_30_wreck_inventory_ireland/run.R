@@ -14,7 +14,10 @@ source("R/save_plots.R")
 
 dir.create("output", showWarnings = FALSE)
 
-if (!file.exists("data/wreck_inventory.csv")) {
+if (!file.exists("data/wreck_inventory.csv") ||
+    !file.exists("data/ne_10m_lakes.geojson") ||
+    !file.exists("data/osi_landmask.geojson") ||
+    !file.exists("data/osni_outline.geojson")) {
   message("Downloading data...")
   download_data()
 }

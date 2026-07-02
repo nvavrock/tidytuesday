@@ -35,8 +35,8 @@ The **Wreck Inventory of Ireland Database (WIID)** lists more than **18,000** kn
 **Story:** Peaks in the 1800s and around WWI; reflects both maritime traffic and catalog completeness.
 
 ### `03_wreck_map.png`
-**What:** Point map of ~3,500 located wrecks around Ireland.  
-**Story:** Coastal clustering; the map is a subset of the full database.
+**What:** Cartographic map — Tailte Éireann landmask (Republic), OSNI outline (Northern Ireland), major lakes (Ree, Derg, Corrib, Neagh, etc.), wreck points.  
+**Story:** Coastal clustering; inland wrecks align with mapped loughs where Natural Earth has geometry.
 
 ### `04_top_classifications.png`
 **What:** Top 10 vessel type labels.  

@@ -58,19 +58,43 @@ download_data <- function(data_dir = "data") {
     "main/data/2026/2026-06-30"
   )
 
+  remote_files <- c(
+    "wreck_inventory.csv" = file.path(base_url, "wreck_inventory.csv"),
+    "ne_10m_lakes_europe.geojson" = paste0(
+      "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/",
+      "master/geojson/ne_10m_lakes_europe.geojson"
+    ),
+    "ne_10m_lakes.geojson" = paste0(
+      "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/",
+      "master/geojson/ne_10m_lakes.geojson"
+    ),
+    "osi_landmask.geojson" = paste0(
+      "https://data-osi.opendata.arcgis.com/api/download/v1/items/",
+      "577487bb7ce94c76b5a7a5f6c29e6ee9/geojson?layers=0"
+    ),
+    "osni_outline.geojson" = paste0(
+      "https://services8.arcgis.com/dyKaQF8UEArzmHO6/arcgis/rest/services/",
+      "osni_open_data_largescale_boundaries_ni_outline_2/FeatureServer/0/query?",
+      "where=1%3D1&outFields=NAME&returnGeometry=true&outSR=4326&",
+      "maxAllowableOffset=0.0003&f=geojson"
+    )
+  )
+
   dir.create(data_dir, showWarnings = FALSE, recursive = TRUE)
 
-  dest <- file.path(data_dir, "wreck_inventory.csv")
-  if (!file.exists(dest)) {
-    download.file(
-      url = file.path(base_url, "wreck_inventory.csv"),
-      destfile = dest,
-      mode = "wb",
-      quiet = TRUE
-    )
+  for (name in names(remote_files)) {
+    dest <- file.path(data_dir, name)
+    if (!file.exists(dest)) {
+      download.file(
+        url = remote_files[[name]],
+        destfile = dest,
+        mode = "wb",
+        quiet = TRUE
+      )
+    }
   }
 
-  invisible(dest)
+  invisible(file.path(data_dir, "wreck_inventory.csv"))
 }
 
 summarise_location_status <- function(wreck_inventory) {

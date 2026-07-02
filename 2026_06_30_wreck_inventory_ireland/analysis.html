@@ -139,12 +139,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"output"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/wreck_inventory.csv"</span>)) {</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download_data</span>()</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>wreck_inventory <span class="ot">&lt;-</span> <span class="fu">load_wreck_data</span>()</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">save_week_plots</span>(wreck_inventory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/wreck_inventory.csv"</span>) <span class="sc">||</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/ne_10m_lakes.geojson"</span>) <span class="sc">||</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/osi_landmask.geojson"</span>) <span class="sc">||</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span><span class="fu">file.exists</span>(<span class="st">"data/osni_outline.geojson"</span>)) {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">download_data</span>()</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>wreck_inventory <span class="ot">&lt;-</span> <span class="fu">load_wreck_data</span>()</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">save_week_plots</span>(wreck_inventory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Data from <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-30">TidyTuesday 2026-06-30</a>: the <a href="https://www.archaeology.ie/advice-and-support/locate-a-monument-or-wreck/wreck-viewer/">Wreck Inventory of Ireland Database (WIID)</a> — over 18,000 known and potential wreck records in Irish waters, curated by Cormac Monaghan.</p>
@@ -292,7 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><strong>Takeaway:</strong> Mapped wrecks cluster along <strong>Ireland’s coasts and major shipping lanes</strong> — especially the south and west. Only ~3,500 records (~20%) have coordinates, so the map shows known sites, not the full catalog.</p>
+<p><strong>Takeaway:</strong> Mapped wrecks cluster along <strong>Ireland’s coasts and shipping lanes</strong>. The basemap uses Tailte Éireann and OSNI open land outlines (cream Republic, grey Northern Ireland) with major lakes from Natural Earth 1:10m (including Lough Ree and Lough Derg). Only ~3,500 records (~20%) have coordinates.</p>
 <hr>
 </section>
 <section id="angle-4-vessel-types" class="level2">

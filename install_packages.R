@@ -8,7 +8,9 @@ pkgs <- c(
   "webshot2",
   "tidytext",
   "stopwords",
-  "glmnet"
+  "glmnet",
+  "sf",
+  "rnaturalearth"
 )
 
 for (pkg in pkgs) {

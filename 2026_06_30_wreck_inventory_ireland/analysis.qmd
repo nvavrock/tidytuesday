@@ -30,7 +30,10 @@ source("R/save_plots.R")
 
 dir.create("output", showWarnings = FALSE)
 
-if (!file.exists("data/wreck_inventory.csv")) {
+if (!file.exists("data/wreck_inventory.csv") ||
+    !file.exists("data/ne_10m_lakes.geojson") ||
+    !file.exists("data/osi_landmask.geojson") ||
+    !file.exists("data/osni_outline.geojson")) {
   download_data()
 }
 
@@ -89,7 +92,7 @@ Where are located wrecks concentrated around Ireland?
 knitr::include_graphics("output/03_wreck_map.png")
 ```
 
-**Takeaway:** Mapped wrecks cluster along **Ireland's coasts and major shipping lanes** — especially the south and west. Only ~3,500 records (~20%) have coordinates, so the map shows known sites, not the full catalog.
+**Takeaway:** Mapped wrecks cluster along **Ireland's coasts and shipping lanes**. The basemap uses Tailte Éireann and OSNI open land outlines (cream Republic, grey Northern Ireland) with major lakes from Natural Earth 1:10m (including Lough Ree and Lough Derg). Only ~3,500 records (~20%) have coordinates.
 
 ---
 
