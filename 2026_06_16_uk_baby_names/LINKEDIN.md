@@ -1,5 +1,8 @@
 # LinkedIn post draft — TidyTuesday UK Baby Names
 
+**Post style:** Numbered takeaways (week 1).  
+**Do not reuse from:** n/a (first post).
+
 **Strategy:** Carousel of 3 chart images (one per takeaway) + link to the **interactive** Quarto report (hover for exact counts/ranks). LinkedIn cannot embed plotly inside the post — the link is where readers explore.
 
 **Interactive report:** https://nvavrock.github.io/tidytuesday/2026_06_16_uk_baby_names/analysis.html
