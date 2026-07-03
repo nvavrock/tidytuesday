@@ -31,7 +31,7 @@ The HTML report embeds static PNGs from `output/`. Run `run_week()` before `rend
 
 ## Outputs
 
-- `output/` — 4 charts + 3 summary CSVs (300 dpi PNGs for LinkedIn and slides)
+- `output/` — 4 charts + 3 summary CSVs (300 dpi PNGs for LinkedIn and slides); `output/_widget/wreck_map.html` is an interactive Leaflet map with wreck tooltips
 - `analysis.qmd` / `analysis.html` — static report
 - `NOTES.md` — plain-language briefing for sharing
 
@@ -39,4 +39,5 @@ The HTML report embeds static PNGs from `output/`. Run `run_week()` before `rend
 
 Official dataset: https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-30
 
-Local copy in `data/wreck_inventory.csv`.
+- `data/wreck_inventory.csv` — TidyTuesday catalog (committed)
+- `data/osi_landmask.geojson`, `data/osni_outline.geojson`, `data/ne_10m_lakes*.geojson` — basemap layers fetched by `download_data()` on first run (Tailte Éireann, OSNI open data, Natural Earth)

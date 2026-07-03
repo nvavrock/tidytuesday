@@ -29,6 +29,15 @@ save_week_plots <- function(wreck_inventory, output_dir = "output") {
     height = 7,
     dpi = 300
   )
+
+  wreck_map_widget <- plot_wreck_map_interactive(wreck_inventory)
+  widget_dir <- file.path(output_dir, "_widget")
+  dir.create(widget_dir, showWarnings = FALSE, recursive = TRUE)
+  htmlwidgets::saveWidget(
+    wreck_map_widget,
+    file = file.path(widget_dir, "wreck_map.html"),
+    selfcontained = FALSE
+  )
   ggsave(
     file.path(output_dir, "04_top_classifications.png"),
     p_class,

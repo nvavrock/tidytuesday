@@ -19,6 +19,8 @@ _site/
 
 # Private local viz-rag corpus (ingested by separate viz-rag repo; not published)
 VIZ_LESSONS.md
+*/LINKEDIN.md
+*/NOTES.md
 
 # LLM/editor session artifacts
 .claude/
@@ -33,3 +35,4 @@ VIZ_LESSONS.md
 2026_06_23_papal_encyclicals/analysis_files/libs/plotly-htmlwidgets-css-2.11.1/
 2026_06_23_papal_encyclicals/analysis_files/libs/plotly-main-2.11.1/
 2026_06_23_papal_encyclicals/analysis_files/libs/typedarray-0.1/
+2026_06_30_wreck_inventory_ireland/output/_widget/

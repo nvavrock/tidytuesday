@@ -10,7 +10,9 @@ pkgs <- c(
   "stopwords",
   "glmnet",
   "sf",
-  "rnaturalearth"
+  "rnaturalearth",
+  "leaflet",
+  "htmlwidgets"
 )
 
 for (pkg in pkgs) {
