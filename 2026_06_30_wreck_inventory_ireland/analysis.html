@@ -146,11 +146,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>wreck_inventory <span class="ot">&lt;-</span> <span class="fu">load_wreck_data</span>()</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">save_week_plots</span>(wreck_inventory)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">save_week_plots</span>(wreck_inventory)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>fig_dir <span class="ot">&lt;-</span> <span class="st">"report-figures"</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(fig_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>report_pngs <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">"output"</span>, <span class="at">pattern =</span> <span class="st">"^0[1-4].*</span><span class="sc">\\</span><span class="st">.png$"</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">invisible</span>(<span class="fu">file.copy</span>(report_pngs, <span class="fu">file.path</span>(fig_dir, <span class="fu">basename</span>(report_pngs)), <span class="at">overwrite =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Data from <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-06-30">TidyTuesday 2026-06-30</a>: the <a href="https://www.archaeology.ie/advice-and-support/locate-a-monument-or-wreck/wreck-viewer/">Wreck Inventory of Ireland Database (WIID)</a> — over 18,000 known and potential wreck records in Irish waters, curated by Cormac Monaghan.</p>
-<p>Charts below are the static PNGs saved to <code>output/</code> by <code>run.R</code> — same files used for LinkedIn and slides.</p>
+<p>Charts below embed copies of the PNGs in <code>output/</code> (same files used for LinkedIn and slides).</p>
 <blockquote class="blockquote">
 <p>The Wreck Inventory of Ireland Database holds records of over 18,000 known and potential wreck sites in the marine and inland waterways of Ireland.</p>
 </blockquote>
@@ -162,12 +167,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"output/01_location_status.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"report-figures/01_location_status.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="output/01_location_status.png" class="img-fluid figure-img" width="1200"></p>
+<p><img src="report-figures/01_location_status.png" class="img-fluid figure-img" width="1200"></p>
 </figure>
 </div>
 </div>
@@ -212,12 +217,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"output/02_wrecks_over_time.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"report-figures/02_wrecks_over_time.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="output/02_wrecks_over_time.png" class="img-fluid figure-img" width="1500"></p>
+<p><img src="report-figures/02_wrecks_over_time.png" class="img-fluid figure-img" width="1500"></p>
 </figure>
 </div>
 </div>
@@ -284,12 +289,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"output/03_wreck_map.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"report-figures/03_wreck_map.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="output/03_wreck_map.png" class="img-fluid figure-img" width="1200"></p>
+<p><img src="report-figures/03_wreck_map.png" class="img-fluid figure-img" width="1200"></p>
 </figure>
 </div>
 </div>
@@ -303,12 +308,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"output/04_top_classifications.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"report-figures/04_top_classifications.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="output/04_top_classifications.png" class="img-fluid figure-img" width="1350"></p>
+<p><img src="report-figures/04_top_classifications.png" class="img-fluid figure-img" width="1350"></p>
 </figure>
 </div>
 </div>

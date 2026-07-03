@@ -54,6 +54,11 @@ save_week_plots <- function(wreck_inventory, output_dir = "output") {
   readr::write_csv(decade_summary, file.path(output_dir, "decade_summary.csv"))
   readr::write_csv(classification_summary, file.path(output_dir, "classification_summary.csv"))
 
+  report_dir <- "report-figures"
+  dir.create(report_dir, showWarnings = FALSE, recursive = TRUE)
+  report_pngs <- list.files(output_dir, pattern = "^0[1-4].*\\.png$", full.names = TRUE)
+  invisible(file.copy(report_pngs, file.path(report_dir, basename(report_pngs)), overwrite = TRUE))
+
   invisible(
     list(
       location_summary = location_summary,
