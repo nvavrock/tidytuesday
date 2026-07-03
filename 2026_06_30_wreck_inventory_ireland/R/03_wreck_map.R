@@ -9,8 +9,11 @@ IRELAND_FLAG_COLORS <- c(
   white = "#FFFFFF",
   orange = "#FF883E"
 )
+NI_SALTIRE_COLORS <- c(
+  white = "#FFFFFF",
+  red = "#C8102E"
+)
 
-MAP_NI_FILL <- "#D8D8D8"
 MAP_BORDER_COLOR <- "#6B8FA3"
 MAP_COAST_STROKE <- "#5A5A5A"
 MAP_WRECK_COLOR <- "#1B2A4A"
@@ -156,15 +159,65 @@ republic_tricolor_sf <- function(republic) {
   )
 }
 
+northern_ireland_saltire_sf <- function(ni) {
+  sf::sf_use_s2(FALSE)
+
+  ni_itm <- ni |>
+    sf::st_make_valid() |>
+    sf::st_transform(29903) |>
+    sf::st_buffer(0)
+
+  bbox <- sf::st_bbox(ni_itm)
+  span <- max(bbox[["xmax"]] - bbox[["xmin"]], bbox[["ymax"]] - bbox[["ymin"]])
+  pad <- 0.05 * span
+  arm_width <- 0.11 * min(bbox[["xmax"]] - bbox[["xmin"]], bbox[["ymax"]] - bbox[["ymin"]])
+
+  saltire_arm <- function(x1, y1, x2, y2) {
+    line <- sf::st_sfc(
+      sf::st_linestring(matrix(c(x1, y1, x2, y2), ncol = 2, byrow = TRUE)),
+      crs = sf::st_crs(ni_itm)
+    )
+    sf::st_buffer(line, dist = arm_width / 2, endCapStyle = "FLAT")
+  }
+
+  x0 <- bbox[["xmin"]] - pad
+  x1 <- bbox[["xmax"]] + pad
+  y0 <- bbox[["ymin"]] - pad
+  y1 <- bbox[["ymax"]] + pad
+
+  clip_arm <- function(arm) {
+    hit <- suppressWarnings(sf::st_intersection(ni_itm, arm))
+    if (nrow(hit) == 0) {
+      return(NULL)
+    }
+    sf::st_sf(part = "red", geometry = sf::st_union(sf::st_geometry(hit)))
+  }
+
+  white <- sf::st_sf(part = "white", geometry = sf::st_geometry(ni_itm))
+  red <- purrr::compact(list(
+    clip_arm(saltire_arm(x0, y0, x1, y1)),
+    clip_arm(saltire_arm(x0, y1, x1, y0))
+  ))
+
+  dplyr::bind_rows(c(list(white), red)) |>
+    sf::st_transform(4326)
+}
+
 ireland_map_layers <- function(data_dir = "data") {
   sf::sf_use_s2(FALSE)
 
   republic <- load_republic_land(data_dir)
+  northern_ireland <- load_northern_ireland_land(data_dir)
 
   list(
     republic = republic,
     republic_tricolor = if (is.null(republic)) NULL else republic_tricolor_sf(republic),
-    northern_ireland = load_northern_ireland_land(data_dir),
+    northern_ireland = northern_ireland,
+    northern_ireland_saltire = if (is.null(northern_ireland)) {
+      NULL
+    } else {
+      northern_ireland_saltire_sf(northern_ireland)
+    },
     lakes = fetch_map_lakes(data_dir)
   )
 }
@@ -184,8 +237,15 @@ plot_wreck_map <- function(wreck_inventory, data_dir = "data") {
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_sf(
-      data = layers$northern_ireland,
-      fill = MAP_NI_FILL,
+      data = layers$northern_ireland_saltire |>
+        dplyr::filter(part == "white"),
+      fill = NI_SALTIRE_COLORS[["white"]],
+      color = NA
+    ) +
+    ggplot2::geom_sf(
+      data = layers$northern_ireland_saltire |>
+        dplyr::filter(part == "red"),
+      fill = NI_SALTIRE_COLORS[["red"]],
       color = NA
     ) +
     ggplot2::geom_sf(
@@ -271,7 +331,7 @@ plot_wreck_map <- function(wreck_inventory, data_dir = "data") {
       ),
       subtitle = paste0(
         scales::comma(nrow(located)), " located records\n",
-        "Irish tricolor (Republic) · Tailte Éireann & OSNI land\n",
+        "Irish tricolor (Republic) · St Patrick's saltire (NI)\n",
         "Lakes: Natural Earth 1:10m"
       ),
       x = NULL,
@@ -376,9 +436,27 @@ plot_wreck_map_interactive <- function(wreck_inventory, data_dir = "data") {
       options = leaflet::pathOptions(pane = "tilePane")
     ) |>
     leaflet::addPolygons(
-      data = layers$northern_ireland,
-      fillColor = MAP_NI_FILL,
+      data = layers$northern_ireland_saltire |>
+        dplyr::filter(part == "white"),
+      fillColor = NI_SALTIRE_COLORS[["white"]],
       fillOpacity = 1,
+      color = NA,
+      weight = 0,
+      options = leaflet::pathOptions(pane = "overlayPane")
+    ) |>
+    leaflet::addPolygons(
+      data = layers$northern_ireland_saltire |>
+        dplyr::filter(part == "red"),
+      fillColor = NI_SALTIRE_COLORS[["red"]],
+      fillOpacity = 1,
+      color = NA,
+      weight = 0,
+      options = leaflet::pathOptions(pane = "overlayPane")
+    ) |>
+    leaflet::addPolygons(
+      data = layers$northern_ireland,
+      fillColor = NA,
+      fillOpacity = 0,
       color = MAP_BORDER_COLOR,
       weight = 1.2,
       options = leaflet::pathOptions(pane = "overlayPane")

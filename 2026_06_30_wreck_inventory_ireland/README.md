@@ -31,7 +31,7 @@ The HTML report embeds static PNGs from `output/`. Run `run_week()` before `rend
 
 ## Outputs
 
-- `output/` — 4 charts + 3 summary CSVs (300 dpi PNGs for LinkedIn and slides); `output/_widget/wreck_map.html` is an interactive Leaflet map with wreck tooltips
+- `output/` — 4 charts + 3 summary CSVs (300 dpi PNGs for LinkedIn and slides); map uses Irish tricolor (Republic) and St Patrick's saltire (NI); `output/_widget/wreck_map.html` is an interactive Leaflet map with wreck tooltips
 - `analysis.qmd` / `analysis.html` — static report
 - `NOTES.md` — plain-language briefing for sharing
 

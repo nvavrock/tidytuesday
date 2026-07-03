@@ -36,3 +36,6 @@ VIZ_LESSONS.md
 2026_06_23_papal_encyclicals/analysis_files/libs/plotly-main-2.11.1/
 2026_06_23_papal_encyclicals/analysis_files/libs/typedarray-0.1/
 2026_06_30_wreck_inventory_ireland/output/_widget/
+2026_06_30_wreck_inventory_ireland/output/03_wreck_map.html
+2026_06_30_wreck_inventory_ireland/output/03_wreck_map_files/
+2026_06_30_wreck_inventory_ireland/data/*.geojson

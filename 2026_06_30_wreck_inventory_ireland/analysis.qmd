@@ -94,7 +94,7 @@ Where are located wrecks concentrated around Ireland?
 knitr::include_graphics("output/03_wreck_map.png")
 ```
 
-**Takeaway:** Mapped wrecks cluster along **Ireland's coasts, shipping lanes, and inland waters** (loughs and rivers where coordinates exist). The basemap uses Tailte Éireann and OSNI land outlines — Irish tricolor on the Republic, grey Northern Ireland — with major lakes from Natural Earth 1:10m. Dublin and Cork are marked in red and blue. Only ~3,500 records (~20%) have coordinates.
+**Takeaway:** Mapped wrecks cluster along **Ireland's coasts, shipping lanes, and inland waters** (loughs and rivers where coordinates exist). The basemap uses Tailte Éireann and OSNI land outlines — Irish tricolor on the Republic, St Patrick's saltire on Northern Ireland — with major lakes from Natural Earth 1:10m. Dublin and Cork are marked in red and blue. Only ~3,500 records (~20%) have coordinates.
 
 ---
 
