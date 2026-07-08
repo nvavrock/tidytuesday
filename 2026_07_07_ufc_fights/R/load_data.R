@@ -14,6 +14,79 @@ WEIGHT_CLASS_PALETTE <- c(
   "#E69F00", "#332288", "#882255", "#44AA99", "#999999"
 )
 
+WEIGHT_CLASS_LEVELS <- c(
+  "Flyweight",
+  "Bantamweight",
+  "Featherweight",
+  "Lightweight",
+  "Welterweight",
+  "Middleweight",
+  "Light Heavyweight",
+  "Heavyweight",
+  "Women's Strawweight",
+  "Women's Flyweight",
+  "Women's Bantamweight",
+  "Women's Featherweight",
+  "Catch Weight",
+  "Super Heavyweight",
+  "Open Weight"
+)
+
+MENS_WEIGHT_CLASS_LEVELS <- c(
+  "Flyweight",
+  "Bantamweight",
+  "Featherweight",
+  "Lightweight",
+  "Welterweight",
+  "Middleweight",
+  "Light Heavyweight",
+  "Heavyweight",
+  "Catch Weight",
+  "Super Heavyweight",
+  "Open Weight"
+)
+
+WOMENS_WEIGHT_CLASS_LEVELS <- c(
+  "Women's Strawweight",
+  "Women's Flyweight",
+  "Women's Bantamweight",
+  "Women's Featherweight"
+)
+
+WOMENS_DIVISION_LABELS <- c(
+  "Strawweight",
+  "Flyweight",
+  "Bantamweight",
+  "Featherweight"
+)
+
+is_womens_division <- function(weight_class) {
+  grepl("^Women's ", as.character(weight_class))
+}
+
+normalize_weight_class <- function(weight_class) {
+  dplyr::case_when(
+    is.na(weight_class) ~ NA_character_,
+    weight_class %in% WEIGHT_CLASS_LEVELS ~ weight_class,
+    grepl("Women's Strawweight", weight_class, fixed = TRUE) ~ "Women's Strawweight",
+    grepl("Women's Flyweight", weight_class, fixed = TRUE) ~ "Women's Flyweight",
+    grepl("Women's Bantamweight", weight_class, fixed = TRUE) ~ "Women's Bantamweight",
+    grepl("Women's Featherweight", weight_class, fixed = TRUE) ~ "Women's Featherweight",
+    grepl("Light Heavyweight", weight_class, fixed = TRUE) ~ "Light Heavyweight",
+    grepl("Super Heavyweight", weight_class, fixed = TRUE) ~ "Super Heavyweight",
+    grepl("Catch Weight", weight_class, fixed = TRUE) ~ "Catch Weight",
+    grepl("Open Weight", weight_class, fixed = TRUE) ~ "Open Weight",
+    grepl("Flyweight", weight_class, fixed = TRUE) ~ "Flyweight",
+    grepl("Bantamweight", weight_class, fixed = TRUE) ~ "Bantamweight",
+    grepl("Featherweight", weight_class, fixed = TRUE) ~ "Featherweight",
+    grepl("Lightweight", weight_class, fixed = TRUE) ~ "Lightweight",
+    grepl("Welterweight", weight_class, fixed = TRUE) ~ "Welterweight",
+    grepl("Middleweight", weight_class, fixed = TRUE) ~ "Middleweight",
+    grepl("Heavyweight", weight_class, fixed = TRUE) ~ "Heavyweight",
+    TRUE ~ NA_character_
+  )
+}
+
 tt_theme <- function(base_size = 13) {
   ggplot2::theme_minimal(base_size = base_size) +
     ggplot2::theme(
@@ -157,8 +230,32 @@ summarise_weight_classes <- function(fights, top_n = 10) {
     dplyr::slice_head(n = top_n)
 }
 
-prepare_fight_details <- function(fights, min_year = 2000) {
+event_levels_by_date_outcome <- function(fights) {
   fights |>
+    dplyr::mutate(
+      finish_rank = match(as.character(finish_type), names(FINISH_COLORS))
+    ) |>
+    dplyr::group_by(event_name) |>
+    dplyr::summarise(
+      event_date = max(fight_date, na.rm = TRUE),
+      min_finish_rank = min(finish_rank, na.rm = TRUE),
+      .groups = "drop"
+    ) |>
+    dplyr::arrange(
+      dplyr::desc(event_date),
+      min_finish_rank,
+      event_name
+    ) |>
+    dplyr::pull(event_name)
+}
+
+sort_fights_by_date_outcome <- function(fights) {
+  fights |>
+    dplyr::arrange(dplyr::desc(fight_date), finish_type)
+}
+
+prepare_fight_details <- function(fights, min_year = 2000) {
+  prepared <- fights |>
     dplyr::filter(
       !is.na(year),
       year >= min_year,
@@ -178,7 +275,20 @@ prepare_fight_details <- function(fights, min_year = 2000) {
         '<a href="%s" target="_blank" rel="noopener">UFCStats</a>',
         fight_url
       ),
-      weight = 1L
+      weight_class = normalize_weight_class(weight_class)
+    )
+
+  prepared |>
+    dplyr::filter(!is.na(weight_class)) |>
+    dplyr::mutate(
+      event_name = factor(
+        event_name,
+        levels = event_levels_by_date_outcome(prepared)
+      ),
+      weight_class = factor(
+        weight_class,
+        levels = WEIGHT_CLASS_LEVELS
+      )
     ) |>
     dplyr::select(
       fight_url,
@@ -196,8 +306,7 @@ prepare_fight_details <- function(fights, min_year = 2000) {
       location,
       referee,
       judging_details,
-      stats_link,
-      weight
+      stats_link
     ) |>
-    dplyr::arrange(dplyr::desc(fight_date))
+    sort_fights_by_date_outcome()
 }

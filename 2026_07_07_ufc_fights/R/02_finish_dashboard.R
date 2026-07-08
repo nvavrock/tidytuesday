@@ -1,32 +1,48 @@
 # Angle 2: Interactive finish mix dashboard (standalone HTML app)
 
-plot_finish_donut <- function(shared, n_fights) {
-  plotly::plot_ly(
-    shared,
-    labels = ~finish_type,
-    values = ~weight,
-    type = "pie",
-    hole = 0.45,
-    textinfo = "label+percent",
-    textposition = "outside",
-    sort = FALSE,
-    marker = list(
-      colors = unname(FINISH_COLORS),
-      line = list(color = "#FFFFFF", width = 1)
-    ),
-    hovertemplate = "<b>%{label}</b><br>%{percent}<extra></extra>"
-  ) |>
-    plotly::layout(
-      title = list(
-        text = paste0("Finish mix<br><sup>", scales::comma(n_fights), " fights</sup>"),
-        x = 0.5,
-        xanchor = "center"
-      ),
-      showlegend = TRUE,
-      legend = list(orientation = "h", y = -0.1),
-      margin = list(t = 80, b = 40, l = 20, r = 20)
-    ) |>
-    plotly::config(displayModeBar = FALSE, displaylogo = FALSE)
+division_donut_colors <- function(divisions) {
+  divisions <- as.character(divisions)
+  stats::setNames(
+    WEIGHT_CLASS_PALETTE[
+      (seq_along(divisions) - 1) %% length(WEIGHT_CLASS_PALETTE) + 1
+    ],
+    divisions
+  )
+}
+
+donut_mount <- function(id) {
+  htmltools::tags$div(
+    id = id,
+    class = "finish-donut",
+    style = "width:100%;height:340px;"
+  )
+}
+
+build_fight_index <- function(fight_details) {
+  fight_details |>
+    dplyr::transmute(
+      key = fight_url,
+      finish_type = as.character(finish_type),
+      weight_class = as.character(weight_class),
+      is_womens = grepl("^Women's ", as.character(weight_class))
+    )
+}
+
+build_division_colors <- function(fight_details) {
+  men_levels <- MENS_WEIGHT_CLASS_LEVELS[
+    MENS_WEIGHT_CLASS_LEVELS %in% as.character(fight_details$weight_class)
+  ]
+  women_levels <- WOMENS_DIVISION_LABELS[
+    paste0("Women's ", WOMENS_DIVISION_LABELS) %in%
+      as.character(fight_details$weight_class)
+  ]
+
+  list(
+    men_order = unname(men_levels),
+    women_order = unname(women_levels),
+    men = as.list(division_donut_colors(men_levels)),
+    women = as.list(division_donut_colors(women_levels))
+  )
 }
 
 build_finish_dashboard <- function(
@@ -35,7 +51,6 @@ build_finish_dashboard <- function(
     max_year = 2026
 ) {
   fight_details <- prepare_fight_details(fights, min_year = min_year)
-  n_fights <- nrow(fight_details)
 
   year_min <- max(min_year, min(fight_details$year, na.rm = TRUE))
   year_max <- min(max_year, max(fight_details$year, na.rm = TRUE))
@@ -45,8 +60,6 @@ build_finish_dashboard <- function(
     key = ~fight_url,
     group = "finish_dash"
   )
-
-  donut <- plot_finish_donut(shared, n_fights)
 
   table <- DT::datatable(
     shared,
@@ -70,8 +83,7 @@ build_finish_dashboard <- function(
       "Location" = "location",
       "Referee" = "referee",
       "Judging" = "judging_details",
-      "Link" = "stats_link",
-      "Weight" = "weight"
+      "Link" = "stats_link"
     ),
     options = list(
       pageLength = 15,
@@ -80,21 +92,43 @@ build_finish_dashboard <- function(
       scrollY = 420,
       deferRender = TRUE,
       columnDefs = list(
-        list(visible = FALSE, targets = 0),
-        list(visible = FALSE, targets = 16)
+        list(visible = FALSE, targets = 0)
       )
     )
   )
 
   htmltools::tagList(
+    htmltools::tags$script(
+      id = "fight-index",
+      type = "application/json",
+      htmltools::HTML(jsonlite::toJSON(build_fight_index(fight_details), dataframe = "rows"))
+    ),
+    htmltools::tags$script(
+      id = "finish-colors",
+      type = "application/json",
+      htmltools::HTML(jsonlite::toJSON(as.list(FINISH_COLORS), auto_unbox = TRUE))
+    ),
+    htmltools::tags$script(
+      id = "division-colors",
+      type = "application/json",
+      htmltools::HTML(
+        jsonlite::toJSON(build_division_colors(fight_details), auto_unbox = TRUE)
+      )
+    ),
     htmltools::tags$style(htmltools::HTML("
       .finish-dashboard { margin: 1.25em 0 2em; }
       .finish-dashboard .crosstalk-input { margin-bottom: 0.75em; }
-      .finish-dashboard .plotly, .finish-dashboard .datatables {
-        margin-top: 0.5em;
-      }
+      .finish-dashboard .datatables { margin-top: 0.5em; }
       .finish-dashboard .event-filter .selectize-control {
         min-width: 100%;
+      }
+      .finish-dashboard .finish-donut {
+        margin-top: 0.5em;
+      }
+      .finish-dashboard .donut-hint {
+        color: #666;
+        font-size: 0.9rem;
+        margin: 0.25em 0 0.75em;
       }
     ")),
     htmltools::tags$div(
@@ -143,12 +177,34 @@ build_finish_dashboard <- function(
           multiple = TRUE
         )
       ),
-      htmltools::tags$br(),
-      crosstalk::bscols(
-        widths = c(4, 8),
-        donut,
-        table
-      )
+      htmltools::tags$p(
+        class = "donut-hint",
+        "Click slices to select (Qlik-style: multi-select within one donut). Click again to toggle off; double-click to clear. Selected slices stay full color; others turn gray. Outcome dropdown: select outcomes to include (empty = all)."
+      ),
+      htmltools::tags$div(
+        style = "display:flex;align-items:center;gap:1rem;margin:0 0 0.75em;",
+        htmltools::tags$div(
+          id = "active-count",
+          style = "color:#666;font-size:0.9rem;",
+          "Active fights: (loading...)"
+        ),
+        htmltools::tags$button(
+          type = "button",
+          id = "clear-donut-selection",
+          style = "font-size:0.85rem;padding:0.2em 0.6em;cursor:pointer;",
+          "Clear donut selection"
+        )
+      ),
+      htmltools::tags$div(
+        class = "donut-row",
+        crosstalk::bscols(
+          widths = c(4, 4, 4),
+          donut_mount("donut-outcome"),
+          donut_mount("donut-men"),
+          donut_mount("donut-women")
+        )
+      ),
+      table
     )
   )
 }
@@ -162,6 +218,9 @@ save_finish_dashboard <- function(
 
   lib_dir_name <- "finish_dashboard_files"
   lib_dir <- file.path(widget_dir, lib_dir_name)
+  dir.create(lib_dir, recursive = TRUE, showWarnings = FALSE)
+
+  js_src <- "R/finish_dashboard_donut.js"
 
   plotly_deps <- htmltools::findDependencies(
     plotly::plot_ly(
@@ -198,12 +257,13 @@ save_finish_dashboard <- function(
         htmltools::tags$h1("UFC finish mix"),
         htmltools::tags$p(
           class = "page-subtitle",
-          "Filter by year, event, outcome, and division. The donut and fight table update together."
+          "Filter by year, event, outcome, and division — or click a donut slice. The charts and fight table update together."
         ),
         dashboard_body,
         htmltools::tags$p(
           htmltools::tags$small(DATA_SOURCE_CAPTION)
-        )
+        ),
+        htmltools::tags$script(src = paste0(lib_dir_name, "/finish_dashboard_donut.js"))
       )
     ),
     plotly_deps,
@@ -211,7 +271,7 @@ save_finish_dashboard <- function(
   )
 
   htmltools::save_html(page, file = output_path, libdir = lib_dir_name)
-  dir.create(lib_dir, recursive = TRUE, showWarnings = FALSE)
+  file.copy(js_src, file.path(lib_dir, "finish_dashboard_donut.js"), overwrite = TRUE)
 
   invisible(normalizePath(output_path, winslash = "/"))
 }
