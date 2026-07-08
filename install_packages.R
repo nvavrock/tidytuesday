@@ -12,7 +12,8 @@ pkgs <- c(
   "sf",
   "rnaturalearth",
   "leaflet",
-  "htmlwidgets"
+  "htmlwidgets",
+  "DT"
 )
 
 for (pkg in pkgs) {

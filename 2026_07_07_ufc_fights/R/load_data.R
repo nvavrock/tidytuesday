@@ -156,3 +156,48 @@ summarise_weight_classes <- function(fights, top_n = 10) {
     dplyr::count(weight_class, sort = TRUE) |>
     dplyr::slice_head(n = top_n)
 }
+
+prepare_fight_details <- function(fights, min_year = 2000) {
+  fights |>
+    dplyr::filter(
+      !is.na(year),
+      year >= min_year,
+      !is.na(finish_type)
+    ) |>
+    dplyr::mutate(
+      winner = dplyr::case_when(
+        f1_result == "W" ~ f1_name,
+        f2_result == "W" ~ f2_name,
+        TRUE ~ NA_character_
+      ),
+      finish_type = factor(
+        finish_type,
+        levels = names(FINISH_COLORS)
+      ),
+      stats_link = sprintf(
+        '<a href="%s" target="_blank" rel="noopener">UFCStats</a>',
+        fight_url
+      ),
+      weight = 1L
+    ) |>
+    dplyr::select(
+      fight_url,
+      fight_date,
+      year,
+      event_name,
+      f1_name,
+      f2_name,
+      winner,
+      weight_class,
+      finish_type,
+      method,
+      round,
+      time,
+      location,
+      referee,
+      judging_details,
+      stats_link,
+      weight
+    ) |>
+    dplyr::arrange(dplyr::desc(fight_date))
+}

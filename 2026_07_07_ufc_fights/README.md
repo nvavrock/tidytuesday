@@ -32,6 +32,7 @@ The HTML report embeds static PNGs from `output/`. Run `run_week()` before `rend
 ## Outputs
 
 - `output/` — 4 charts + 4 summary CSVs (300 dpi PNGs for LinkedIn and slides)
+- `output/_widget/finish_dashboard.html` — standalone interactive finish-mix dashboard (year, event, outcome, division filters; donut + fight table). Open in a browser after `run_week()`.
 - `analysis.qmd` / `analysis.html` — static report
 - `NOTES.md` — plain-language briefing for sharing
 
