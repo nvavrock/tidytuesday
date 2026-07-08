@@ -17,7 +17,7 @@ source("install_packages.R")
 
 ```r
 source("run_week.R")
-run_week("2026_06_30_wreck_inventory_ireland")   # or other week folders below
+run_week("2026_07_07_ufc_fights")   # or other week folders below
 ```
 
 4. Render the report:
@@ -38,6 +38,7 @@ After chart changes, run both `run_week()` (updates `output/` PNGs) and `render_
 | 2026-06-16 | UK Baby Names | [2026_06_16_uk_baby_names/](2026_06_16_uk_baby_names/) | Interactive (plotly) |
 | 2026-06-23 | Papal Encyclicals | [2026_06_23_papal_encyclicals/](2026_06_23_papal_encyclicals/) | Static PNG embeds |
 | 2026-06-30 | Wreck Inventory of Ireland | [2026_06_30_wreck_inventory_ireland/](2026_06_30_wreck_inventory_ireland/) | Static PNG embeds |
+| 2026-07-07 | UFC Athletes and Fight Data | [2026_07_07_ufc_fights/](2026_07_07_ufc_fights/) | Static PNG embeds |
 
 ## Project layout
 
@@ -62,6 +63,13 @@ tidytuesday/
 │   ├── output/
 │   └── R/
 └── 2026_06_30_wreck_inventory_ireland/
+    ├── run.R
+    ├── analysis.qmd
+    ├── NOTES.md
+    ├── data/
+    ├── output/
+    └── R/
+└── 2026_07_07_ufc_fights/
     ├── run.R
     ├── analysis.qmd
     ├── NOTES.md
