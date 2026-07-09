@@ -18,6 +18,15 @@ donut_mount <- function(id) {
   )
 }
 
+donut_gray_btn <- function(id, label) {
+  htmltools::tags$button(
+    type = "button",
+    id = id,
+    class = "donut-gray-btn",
+    label
+  )
+}
+
 build_fight_index <- function(fight_details) {
   fight_details |>
     dplyr::transmute(
@@ -138,6 +147,18 @@ build_finish_dashboard <- function(
         flex: 1;
         min-width: 0;
       }
+      .finish-dashboard .donut-gray-btn {
+        display: block;
+        margin: 0.35em auto 0;
+        font-size: 0.85rem;
+        padding: 0.2em 0.6em;
+        cursor: pointer;
+      }
+      .finish-dashboard .donut-gray-btn.is-active {
+        background: #374151;
+        color: #fff;
+        border-color: #374151;
+      }
     ")),
     htmltools::tags$div(
       class = "finish-dashboard",
@@ -187,14 +208,21 @@ build_finish_dashboard <- function(
       ),
       htmltools::tags$p(
         class = "donut-hint",
-        "Click slices to select (Qlik-style: multi-select within one donut). Click again to toggle off; double-click to clear. Selected slices stay full color; others turn gray. Outcome dropdown: select outcomes to include (empty = all)."
+        "Click slices to select (Qlik-style: multi-select within one donut). Click again to toggle off; double-click to clear. Selected slices stay full color; others turn gray. Press Submit selection to rescale each donut to selected slices only (100%)."
       ),
       htmltools::tags$div(
-        style = "display:flex;align-items:center;gap:1rem;margin:0 0 0.75em;",
+        style = "display:flex;align-items:center;gap:1rem;margin:0 0 0.75em;flex-wrap:wrap;",
         htmltools::tags$div(
           id = "active-count",
           style = "color:#666;font-size:0.9rem;",
           "Active fights: (loading...)"
+        ),
+        htmltools::tags$button(
+          type = "button",
+          id = "submit-donut-selection",
+          style = "font-size:0.85rem;padding:0.2em 0.6em;cursor:pointer;",
+          disabled = TRUE,
+          "Submit selection"
         ),
         htmltools::tags$button(
           type = "button",
@@ -211,12 +239,14 @@ build_finish_dashboard <- function(
         ),
         htmltools::tags$div(
           class = "donut-col",
-          donut_mount("donut-men")
+          donut_mount("donut-men"),
+          donut_gray_btn("gray-out-donut-men", "Gray out men's")
         ),
         htmltools::tags$div(
           id = "donut-women-wrap",
           class = "donut-col donut-col-women",
-          donut_mount("donut-women")
+          donut_mount("donut-women"),
+          donut_gray_btn("gray-out-donut-women", "Gray out women's")
         )
       ),
       table
