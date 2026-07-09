@@ -63,9 +63,7 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
 
   fight_details <- prepare_fight_details(fights, min_year = year_floor)
 
-  year_levels <- sort(unique(fight_details$year))
-  year_min <- min(year_levels)
-  year_max <- max(year_levels)
+  year_levels <- sort(unique(fight_details$year), decreasing = TRUE)
 
   fight_details <- fight_details |>
     dplyr::mutate(
@@ -171,31 +169,23 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
         color: #fff;
         border-color: #374151;
       }
+      .finish-dashboard #clear-donut-selection:disabled,
+      .finish-dashboard #submit-donut-selection:disabled {
+        opacity: 0.45;
+        cursor: default;
+      }
     ")),
     htmltools::tags$div(
       class = "finish-dashboard",
       crosstalk::bscols(
-        widths = c(6, 6),
-        crosstalk::filter_slider(
-          "year_range",
-          "Year range",
-          shared,
-          ~year,
-          min = year_min,
-          max = year_max,
-          step = 1,
-          sep = ""
-        ),
+        widths = c(4, 8),
         crosstalk::filter_select(
           "year_pick",
           "Years",
           shared,
           ~year,
           multiple = TRUE
-        )
-      ),
-      htmltools::tags$div(
-        class = "event-filter",
+        ),
         crosstalk::filter_select(
           "event_name",
           "Event",
@@ -226,6 +216,7 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
           type = "button",
           id = "clear-donut-selection",
           style = "font-size:0.85rem;padding:0.2em 0.6em;cursor:pointer;",
+          disabled = TRUE,
           "Clear donut selection"
         )
       ),

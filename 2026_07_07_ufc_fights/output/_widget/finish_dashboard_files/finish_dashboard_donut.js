@@ -383,6 +383,14 @@
     btn.textContent = submittedMode ? "Submitted" : "Submit selection";
   }
 
+  function updateClearButton() {
+    var btn = document.getElementById("clear-donut-selection");
+    if (!btn) {
+      return;
+    }
+    btn.disabled = !hasActiveDonutFilter();
+  }
+
   function updateGrayOutButtons() {
     ["men", "women"].forEach(function (kind) {
       var btn = document.getElementById("gray-out-donut-" + kind);
@@ -750,6 +758,7 @@
       womenSelected ? womenOnlyActiveCount() : null
     );
     updateSubmitButton();
+    updateClearButton();
     updateGrayOutButtons();
   }
 
@@ -776,6 +785,85 @@
         }
       }, 100);
     }
+  }
+
+  function sortYearChipsDesc(container) {
+    var input = container.querySelector(".selectize-input");
+    if (!input) {
+      return;
+    }
+    var control = input.querySelector("input");
+    if (!control) {
+      return;
+    }
+    var items = Array.prototype.slice.call(input.querySelectorAll(".item"));
+    if (items.length < 2) {
+      return;
+    }
+    items.sort(function (a, b) {
+      return (
+        Number(b.getAttribute("data-value")) -
+        Number(a.getAttribute("data-value"))
+      );
+    });
+    items.forEach(function (item) {
+      input.insertBefore(item, control);
+    });
+  }
+
+  function initYearChipClick(retry) {
+    var container = document.getElementById("year_pick");
+    if (!container) {
+      return;
+    }
+
+    var select = container.querySelector("select");
+    if (!select || !select.selectize) {
+      if (retry < 100) {
+        setTimeout(function () {
+          initYearChipClick(retry + 1);
+        }, 50);
+      }
+      return;
+    }
+
+    if (container.__yearChipClickBound) {
+      return;
+    }
+
+    var input = container.querySelector(".selectize-input");
+    if (!input) {
+      return;
+    }
+
+    container.__yearChipClickBound = true;
+    select.selectize.on("change", function () {
+      sortYearChipsDesc(container);
+    });
+    input.addEventListener(
+      "mousedown",
+      function (e) {
+        var item = e.target.closest(".item");
+        if (!item || !input.contains(item)) {
+          return;
+        }
+        if (e.target.closest(".remove")) {
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        var value = item.getAttribute("data-value");
+        if (!value) {
+          return;
+        }
+        select.selectize.removeItem(value);
+        select.selectize.close();
+        if (select.selectize.isFocused) {
+          select.selectize.blur();
+        }
+      },
+      true
+    );
   }
 
   function initDashboard() {
@@ -821,6 +909,7 @@
     crosstalk.group(GROUP).var("filter").on("change", onExternalFilterChange);
 
     refreshExternalBaseline(0);
+    initYearChipClick(0);
   }
 
   function boot() {
