@@ -47,7 +47,7 @@ build_division_colors <- function(fight_details) {
 
 build_finish_dashboard <- function(
     fights,
-    min_year = 2000,
+    min_year = 2020,
     max_year = 2026
 ) {
   fight_details <- prepare_fight_details(fights, min_year = min_year)
@@ -245,7 +245,7 @@ save_finish_dashboard <- function(
     )
   )
 
-  dashboard_body <- build_finish_dashboard(fights)
+  dashboard_body <- build_finish_dashboard(fights, min_year = 2020, max_year = 2026)
 
   page <- htmltools::attachDependencies(
     htmltools::tags$html(
