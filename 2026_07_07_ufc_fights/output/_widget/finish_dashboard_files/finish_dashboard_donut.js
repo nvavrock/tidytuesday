@@ -49,8 +49,94 @@
     });
   }
 
+  function snapshotExternalKeys() {
+    if (!listenHandle) {
+      return;
+    }
+    applying = true;
+    if (setHandle) {
+      setHandle.clear();
+    }
+    var keys = listenHandle.filteredKeys;
+    applying = false;
+    if (keys !== null && keys !== undefined) {
+      lastExternalKeys = keys;
+    } else {
+      lastExternalKeys = null;
+    }
+  }
+
   function getExternalRows() {
     return rowsFromKeys(lastExternalKeys);
+  }
+
+  function unionKeys(a, b) {
+    var tmp = {};
+    a.forEach(function (k) {
+      tmp[k] = true;
+    });
+    b.forEach(function (k) {
+      tmp[k] = true;
+    });
+    return Object.keys(tmp);
+  }
+
+  function allWomenKeys(baseRows) {
+    return baseRows
+      .filter(function (row) {
+        return row.is_womens;
+      })
+      .map(function (row) {
+        return row.key;
+      });
+  }
+
+  function allMenKeys(baseRows) {
+    return baseRows
+      .filter(function (row) {
+        return !row.is_womens;
+      })
+      .map(function (row) {
+        return row.key;
+      });
+  }
+
+  function divisionFilterKeys(baseRows) {
+    var menKeys = keysForKind("men", baseRows);
+    var womenKeys = keysForKind("women", baseRows);
+    var menSel = selectedLabelsByKind.men.size > 0;
+    var womenSel = selectedLabelsByKind.women.size > 0;
+
+    if (!menSel && !womenSel) {
+      return null;
+    }
+    if (menSel && womenSel) {
+      return unionKeys(menKeys, womenKeys);
+    }
+    if (menSel) {
+      return unionKeys(menKeys, allWomenKeys(baseRows));
+    }
+    return unionKeys(womenKeys, allMenKeys(baseRows));
+  }
+
+  function rowsForDivisionUnion(baseRows) {
+    var keys = divisionFilterKeys(baseRows);
+    if (!keys) {
+      return baseRows;
+    }
+    return rowsFromKeyList(baseRows, keys);
+  }
+
+  function menOnlyActiveCount() {
+    var baseRows = getExternalRows();
+    var menKeys = keysForKind("men", baseRows);
+    return menKeys ? menKeys.length : 0;
+  }
+
+  function womenOnlyActiveCount() {
+    var baseRows = getExternalRows();
+    var womenKeys = keysForKind("women", baseRows);
+    return womenKeys ? womenKeys.length : 0;
   }
 
   function getActiveRows() {
@@ -74,7 +160,7 @@
     }
     var keys = listenHandle.filteredKeys;
     if (keys === null || keys === undefined) {
-      return fightIndex.length;
+      return getExternalRows().length;
     }
     return keys.length;
   }
@@ -149,15 +235,38 @@
     });
   }
 
+  function otherKindsForDonutDisplay(kind) {
+    var kinds = ["outcome", "men", "women"];
+    return kinds.filter(function (k) {
+      if (k === kind) {
+        return false;
+      }
+      // Division donuts don't filter each other or outcome on the opposite gender.
+      if (k === "men" && (kind === "outcome" || kind === "women")) {
+        return false;
+      }
+      if (k === "women" && (kind === "outcome" || kind === "men")) {
+        return false;
+      }
+      return selectedLabelsByKind[k].size > 0;
+    });
+  }
+
   function rowsForDonut(kind) {
     var baseRows = getExternalRows();
-    var kinds = ["outcome", "men", "women"];
+
+    if (
+      kind === "outcome" &&
+      (selectedLabelsByKind.men.size > 0 ||
+        selectedLabelsByKind.women.size > 0)
+    ) {
+      baseRows = rowsForDivisionUnion(baseRows);
+    }
+
+    var applyKinds = otherKindsForDonutDisplay(kind);
     var resultKeys = null;
 
-    kinds.forEach(function (k) {
-      if (k === kind) {
-        return;
-      }
+    applyKinds.forEach(function (k) {
       var kindKeys = keysForKind(k, baseRows);
       if (kindKeys === null) {
         return;
@@ -166,7 +275,9 @@
         resultKeys === null ? kindKeys : intersectKeyLists(resultKeys, kindKeys);
     });
 
-    return rowsFromKeyList(baseRows, resultKeys);
+    var rows = rowsFromKeyList(baseRows, resultKeys);
+
+    return rows;
   }
 
   function refreshDatatable() {
@@ -181,16 +292,14 @@
     });
   }
 
-  function snapshotExternalKeys() {
-    if (!listenHandle) {
-      return;
+  function snapshotExternalKeysAndReapply() {
+    var hadDonut = hasAnyDonutSelection();
+    snapshotExternalKeys();
+    if (hadDonut) {
+      pushDonutFilter();
+    } else {
+      redrawAll();
     }
-    applying = true;
-    if (setHandle) {
-      setHandle.clear();
-    }
-    lastExternalKeys = listenHandle.filteredKeys;
-    applying = false;
   }
 
   function clearSelection() {
@@ -222,17 +331,20 @@
       return null;
     }
     var baseRows = getExternalRows();
-    var kinds = ["outcome", "men", "women"];
     var resultKeys = null;
 
-    kinds.forEach(function (kind) {
-      var kindKeys = keysForKind(kind, baseRows);
-      if (kindKeys === null) {
-        return;
-      }
+    var outcomeKeys = keysForKind("outcome", baseRows);
+    if (outcomeKeys !== null) {
+      resultKeys = outcomeKeys;
+    }
+
+    var divisionKeys = divisionFilterKeys(baseRows);
+    if (divisionKeys !== null) {
       resultKeys =
-        resultKeys === null ? kindKeys : intersectKeyLists(resultKeys, kindKeys);
-    });
+        resultKeys === null
+          ? divisionKeys
+          : intersectKeyLists(resultKeys, divisionKeys);
+    }
 
     return resultKeys;
   }
@@ -430,6 +542,13 @@
     });
   }
 
+  function ensureWomenVisible() {
+    var womenWrap = document.getElementById("donut-women-wrap");
+    if (womenWrap) {
+      womenWrap.style.display = "";
+    }
+  }
+
   function drawDonut(elId, kind, rows, subtitleN) {
     var el = document.getElementById(elId);
     if (!el || typeof Plotly === "undefined") {
@@ -485,7 +604,10 @@
   }
 
   function redrawAll() {
+    ensureWomenVisible();
     var activeCount = getActiveKeyCount();
+    var menSelected = selectedLabelsByKind.men.size > 0;
+    var womenSelected = selectedLabelsByKind.women.size > 0;
 
     var countEl = document.getElementById("active-count");
     if (countEl) {
@@ -503,14 +625,39 @@
       "donut-men",
       "men",
       rowsForDonut("men"),
-      selectedLabelsByKind.men.size > 0 ? activeCount : null
+      menSelected ? menOnlyActiveCount() : null
     );
     drawDonut(
       "donut-women",
       "women",
       rowsForDonut("women"),
-      selectedLabelsByKind.women.size > 0 ? activeCount : null
+      womenSelected ? womenOnlyActiveCount() : null
     );
+  }
+
+  function refreshExternalBaseline(retry) {
+    snapshotExternalKeysAndReapply();
+    if (retry < 40) {
+      setTimeout(function () {
+        var prevLen = lastExternalKeys ? lastExternalKeys.length : fightIndex.length;
+        snapshotExternalKeys();
+        var newLen = lastExternalKeys ? lastExternalKeys.length : fightIndex.length;
+        if (hasAnyDonutSelection()) {
+          pushDonutFilter();
+        } else {
+          redrawAll();
+        }
+        if (
+          (listenHandle.filteredKeys === null ||
+            listenHandle.filteredKeys === undefined) &&
+          retry < 20
+        ) {
+          refreshExternalBaseline(retry + 1);
+        } else if (newLen !== prevLen && retry < 40) {
+          refreshExternalBaseline(retry + 1);
+        }
+      }, 100);
+    }
   }
 
   function initDashboard() {
@@ -528,11 +675,10 @@
 
     listenHandle = new crosstalk.FilterHandle(GROUP);
     setHandle = new crosstalk.FilterHandle(GROUP);
-    snapshotExternalKeys();
 
     crosstalk.group(GROUP).var("filter").on("change", onExternalFilterChange);
 
-    redrawAll();
+    refreshExternalBaseline(0);
   }
 
   function boot() {

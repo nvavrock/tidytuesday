@@ -130,6 +130,14 @@ build_finish_dashboard <- function(
         font-size: 0.9rem;
         margin: 0.25em 0 0.75em;
       }
+      .finish-dashboard .donut-row {
+        display: flex;
+        gap: 0;
+      }
+      .finish-dashboard .donut-col {
+        flex: 1;
+        min-width: 0;
+      }
     ")),
     htmltools::tags$div(
       class = "finish-dashboard",
@@ -197,10 +205,17 @@ build_finish_dashboard <- function(
       ),
       htmltools::tags$div(
         class = "donut-row",
-        crosstalk::bscols(
-          widths = c(4, 4, 4),
-          donut_mount("donut-outcome"),
-          donut_mount("donut-men"),
+        htmltools::tags$div(
+          class = "donut-col",
+          donut_mount("donut-outcome")
+        ),
+        htmltools::tags$div(
+          class = "donut-col",
+          donut_mount("donut-men")
+        ),
+        htmltools::tags$div(
+          id = "donut-women-wrap",
+          class = "donut-col donut-col-women",
           donut_mount("donut-women")
         )
       ),

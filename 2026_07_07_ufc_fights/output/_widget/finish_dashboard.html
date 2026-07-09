@@ -65,6 +65,14 @@
         font-size: 0.9rem;
         margin: 0.25em 0 0.75em;
       }
+      .finish-dashboard .donut-row {
+        display: flex;
+        gap: 0;
+      }
+      .finish-dashboard .donut-col {
+        flex: 1;
+        min-width: 0;
+      }
     </style>
     <div class="finish-dashboard">
       <div class="container-fluid crosstalk-bscols">
@@ -952,18 +960,14 @@
         <button type="button" id="clear-donut-selection" style="font-size:0.85rem;padding:0.2em 0.6em;cursor:pointer;">Clear donut selection</button>
       </div>
       <div class="donut-row">
-        <div class="container-fluid crosstalk-bscols">
-          <div class="row">
-            <div class="col-xs-4">
-              <div id="donut-outcome" class="finish-donut" style="width:100%;height:340px;"></div>
-            </div>
-            <div class="col-xs-4">
-              <div id="donut-men" class="finish-donut" style="width:100%;height:340px;"></div>
-            </div>
-            <div class="col-xs-4">
-              <div id="donut-women" class="finish-donut" style="width:100%;height:340px;"></div>
-            </div>
-          </div>
+        <div class="donut-col">
+          <div id="donut-outcome" class="finish-donut" style="width:100%;height:340px;"></div>
+        </div>
+        <div class="donut-col">
+          <div id="donut-men" class="finish-donut" style="width:100%;height:340px;"></div>
+        </div>
+        <div id="donut-women-wrap" class="donut-col donut-col-women">
+          <div id="donut-women" class="finish-donut" style="width:100%;height:340px;"></div>
         </div>
       </div>
       <div class="datatables html-widget html-fill-item" id="htmlwidget-a0005f4f64f8dc59a908" style="width:100%;height:auto;"></div>
