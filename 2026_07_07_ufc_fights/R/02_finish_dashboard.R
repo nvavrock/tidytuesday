@@ -31,6 +31,9 @@ build_fight_index <- function(fight_details) {
   fight_details |>
     dplyr::transmute(
       key = fight_url,
+      year = as.character(year),
+      fight_date = as.character(fight_date),
+      event_name = as.character(event_name),
       finish_type = as.character(finish_type),
       weight_class = as.character(weight_class),
       is_womens = grepl("^Women's ", as.character(weight_class))
@@ -173,6 +176,25 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
       .finish-dashboard #submit-donut-selection:disabled {
         opacity: 0.45;
         cursor: default;
+      }
+      .finish-dashboard #event_name .selectize-input {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+        min-height: 38px;
+      }
+      .finish-dashboard #event_name .selectize-input .item {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin: 2px 0;
+        white-space: normal;
+      }
+      .finish-dashboard #event_name .selectize-input > input {
+        width: 100% !important;
+        order: 999;
+        margin-top: 2px;
       }
     ")),
     htmltools::tags$div(
