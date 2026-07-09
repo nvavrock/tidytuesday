@@ -54,15 +54,27 @@ build_division_colors <- function(fight_details) {
   )
 }
 
-build_finish_dashboard <- function(
-    fights,
-    min_year = 2020,
-    max_year = 2026
-) {
-  fight_details <- prepare_fight_details(fights, min_year = min_year)
+build_finish_dashboard <- function(fights, min_year = NULL) {
+  year_floor <- if (is.null(min_year)) {
+    min(fights$year, na.rm = TRUE)
+  } else {
+    min_year
+  }
 
-  year_min <- max(min_year, min(fight_details$year, na.rm = TRUE))
-  year_max <- min(max_year, max(fight_details$year, na.rm = TRUE))
+  fight_details <- prepare_fight_details(fights, min_year = year_floor)
+
+  year_levels <- sort(unique(fight_details$year))
+  year_min <- min(year_levels)
+  year_max <- max(year_levels)
+
+  fight_details <- fight_details |>
+    dplyr::mutate(
+      year = factor(
+        as.character(year),
+        levels = as.character(year_levels),
+        ordered = TRUE
+      )
+    )
 
   shared <- crosstalk::SharedData$new(
     fight_details,
@@ -163,7 +175,7 @@ build_finish_dashboard <- function(
     htmltools::tags$div(
       class = "finish-dashboard",
       crosstalk::bscols(
-        widths = c(3, 3, 3, 3),
+        widths = c(6, 6),
         crosstalk::filter_slider(
           "year_range",
           "Year range",
@@ -179,20 +191,6 @@ build_finish_dashboard <- function(
           "Years",
           shared,
           ~year,
-          multiple = TRUE
-        ),
-        crosstalk::filter_select(
-          "finish_type",
-          "Outcome",
-          shared,
-          ~finish_type,
-          multiple = TRUE
-        ),
-        crosstalk::filter_select(
-          "weight_class",
-          "Division",
-          shared,
-          ~weight_class,
           multiple = TRUE
         )
       ),
@@ -275,7 +273,7 @@ save_finish_dashboard <- function(
     )
   )
 
-  dashboard_body <- build_finish_dashboard(fights, min_year = 2020, max_year = 2026)
+  dashboard_body <- build_finish_dashboard(fights, min_year = 2020)
 
   page <- htmltools::attachDependencies(
     htmltools::tags$html(
