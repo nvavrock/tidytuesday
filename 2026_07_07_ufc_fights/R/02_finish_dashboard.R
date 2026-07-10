@@ -98,11 +98,11 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
       weight_class,
       finish_type,
       method,
+      judging_details,
       round,
       time,
       location,
       referee,
-      judging_details,
       stats_link
     )
 
@@ -129,11 +129,11 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
       "Division" = "weight_class",
       "Outcome" = "finish_type",
       "Method" = "method",
+      "Judging" = "judging_details",
       "Round" = "round",
       "Time" = "time",
       "Location" = "location",
       "Referee" = "referee",
-      "Judging" = "judging_details",
       "Link" = "stats_link"
     ),
     options = list(
