@@ -74,7 +74,36 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
         as.character(year),
         levels = as.character(year_levels),
         ordered = TRUE
+      ),
+      event_display = paste0(
+        as.character(event_name),
+        " (",
+        as.character(fight_date),
+        ")"
+      ),
+      loser = dplyr::case_when(
+        !is.na(winner) & winner == f1_name ~ f2_name,
+        !is.na(winner) & winner == f2_name ~ f1_name,
+        TRUE ~ NA_character_
       )
+    ) |>
+    dplyr::select(
+      fight_url,
+      fight_date,
+      year,
+      event_name,
+      event_display,
+      winner,
+      loser,
+      weight_class,
+      finish_type,
+      method,
+      round,
+      time,
+      location,
+      referee,
+      judging_details,
+      stats_link
     )
 
   shared <- crosstalk::SharedData$new(
@@ -93,10 +122,10 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
       "URL key" = "fight_url",
       "Date" = "fight_date",
       "Year" = "year",
-      "Event" = "event_name",
-      "Fighter 1" = "f1_name",
-      "Fighter 2" = "f2_name",
+      "Event key" = "event_name",
+      "Event" = "event_display",
       "Winner" = "winner",
+      "Loser" = "loser",
       "Division" = "weight_class",
       "Outcome" = "finish_type",
       "Method" = "method",
@@ -114,7 +143,7 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
       scrollY = 420,
       deferRender = TRUE,
       columnDefs = list(
-        list(visible = FALSE, targets = 0)
+        list(visible = FALSE, targets = c(0, 1, 2, 3))
       )
     )
   )

@@ -25,6 +25,8 @@
   };
   var linkingYearEvent = false;
   var eventLatestDate = {};
+  var allYearsOrdered = [];
+  var allEventsOrdered = [];
   var DIMMED_SLICE = "#D1D5DB";
 
   function loadConfig() {
@@ -38,6 +40,8 @@
     finishColors = JSON.parse(finishEl.textContent);
     divisionColors = JSON.parse(divisionEl.textContent);
     buildEventDateLookup();
+    allEventsOrdered = computeAllowedEvents([]);
+    allYearsOrdered = computeAllowedYears([]);
     return true;
   }
 
@@ -887,7 +891,7 @@
     fightIndex.forEach(function (row) {
       if (
         selectedYears.length > 0 &&
-        selectedYears.indexOf(row.year) < 0
+        selectedYears.indexOf(String(row.year)) < 0
       ) {
         return;
       }
@@ -927,9 +931,33 @@
     var order = orderedValues.filter(function (value) {
       return Object.prototype.hasOwnProperty.call(selectize.options, value);
     });
+    var wasOpen = selectize.isOpen;
     selectize.order = order;
     if (typeof selectize.refreshOptions === "function") {
       selectize.refreshOptions(false);
+    }
+    if (!wasOpen) {
+      selectize.close();
+    }
+  }
+
+  function needsOptionRebuild(selectize, orderedValues) {
+    for (var i = 0; i < orderedValues.length; i++) {
+      if (!selectize.options[orderedValues[i]]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function updateSelectizeOptions(selectize, orderedValues) {
+    if (!selectize) {
+      return;
+    }
+    if (needsOptionRebuild(selectize, orderedValues)) {
+      rebuildSelectizeOptions(selectize, orderedValues);
+    } else {
+      refreshSelectizeOptions(selectize, orderedValues);
     }
   }
 
@@ -972,6 +1000,42 @@
     }
   }
 
+  function rebuildSelectizeOptions(selectize, orderedValues) {
+    if (!selectize) {
+      return;
+    }
+
+    var allowedSet = {};
+    orderedValues.forEach(function (value) {
+      allowedSet[value] = true;
+    });
+
+    var selected = filterSelectItems(selectize.items).filter(function (value) {
+      return allowedSet[value];
+    });
+
+    selectize.close();
+
+    Object.keys(selectize.options).slice().forEach(function (key) {
+      if (key !== "") {
+        selectize.removeOption(key);
+      }
+    });
+    stripAllOption(selectize);
+
+    orderedValues.forEach(function (value) {
+      selectize.addOption({ value: value, label: value });
+    });
+
+    applySelectizeOptionOrder(selectize, orderedValues);
+
+    selected.forEach(function (value) {
+      if (selectize.items.indexOf(value) < 0) {
+        selectize.addItem(value, true);
+      }
+    });
+  }
+
   function syncYearEventFilters() {
     if (linkingYearEvent) {
       return;
@@ -988,13 +1052,19 @@
     stripAllOption(yearSelectize);
     stripAllOption(eventSelectize);
 
-    var selectedYears = filterSelectItems(yearSelectize.items);
+    var selectedYears = filterSelectItems(yearSelectize.items).map(String);
     var selectedEvents = filterSelectItems(eventSelectize.items);
-    var allowedEvents = computeAllowedEvents(selectedYears);
-    var allowedYears = computeAllowedYears(selectedEvents);
+    var allowedEvents =
+      selectedYears.length === 0
+        ? allEventsOrdered
+        : computeAllowedEvents(selectedYears);
+    var allowedYears =
+      selectedEvents.length === 0
+        ? allYearsOrdered
+        : computeAllowedYears(selectedEvents);
 
-    refreshSelectizeOptions(eventSelectize, allowedEvents);
-    refreshSelectizeOptions(yearSelectize, allowedYears);
+    updateSelectizeOptions(eventSelectize, allowedEvents);
+    updateSelectizeOptions(yearSelectize, allowedYears);
 
     stripAllOption(yearSelectize);
     stripAllOption(eventSelectize);
@@ -1004,7 +1074,7 @@
     linkingYearEvent = false;
   }
 
-  function bindChipClickRemove(container, selectize, onAfterRemove) {
+  function bindChipClickRemove(container, selectize) {
     var input = container.querySelector(".selectize-input");
     if (!input || container.__chipClickBound) {
       return;
@@ -1028,12 +1098,6 @@
         }
         selectize.removeItem(value);
         selectize.close();
-        if (selectize.isFocused) {
-          selectize.blur();
-        }
-        if (onAfterRemove) {
-          onAfterRemove();
-        }
       },
       true
     );
@@ -1066,20 +1130,29 @@
     stripAllOption(yearSelectize);
     stripAllOption(eventSelectize);
 
+    allEventsOrdered = computeAllowedEvents([]);
+    allYearsOrdered = computeAllowedYears([]);
+
     yearSelectize.on("change", syncYearEventFilters);
     eventSelectize.on("change", syncYearEventFilters);
     syncYearEventFilters();
 
     yearSelectize.on("dropdown_open", function () {
+      var selectedEvents = filterSelectItems(eventSelectize.items);
       applySelectizeOptionOrder(
         yearSelectize,
-        computeAllowedYears(filterSelectItems(eventSelectize.items))
+        selectedEvents.length === 0
+          ? allYearsOrdered
+          : computeAllowedYears(selectedEvents)
       );
     });
     eventSelectize.on("dropdown_open", function () {
+      var selectedYears = filterSelectItems(yearSelectize.items).map(String);
       applySelectizeOptionOrder(
         eventSelectize,
-        computeAllowedEvents(filterSelectItems(yearSelectize.items))
+        selectedYears.length === 0
+          ? allEventsOrdered
+          : computeAllowedEvents(selectedYears)
       );
     });
 
@@ -1090,8 +1163,8 @@
       sortEventChipsDesc(eventContainer);
     });
 
-    bindChipClickRemove(yearContainer, yearSelectize, syncYearEventFilters);
-    bindChipClickRemove(eventContainer, eventSelectize, syncYearEventFilters);
+    bindChipClickRemove(yearContainer, yearSelectize);
+    bindChipClickRemove(eventContainer, eventSelectize);
   }
 
   function initYearChipClick(retry) {
