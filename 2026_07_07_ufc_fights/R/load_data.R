@@ -265,6 +265,38 @@ sort_fights_by_date_outcome <- function(fights) {
     dplyr::arrange(dplyr::desc(fight_date), finish_type)
 }
 
+attach_title_bouts <- function(fights, ultimate = NULL) {
+  if (is.null(ultimate)) {
+    ultimate <- load_ultimate_data()
+  }
+
+  title_lookup <- ultimate |>
+    dplyr::mutate(
+      fight_date = as.Date(date),
+      pair = paste(
+        pmin(r_fighter, b_fighter),
+        pmax(r_fighter, b_fighter),
+        sep = "|"
+      ),
+      is_title_fight = title_bout %in% TRUE
+    ) |>
+    dplyr::distinct(fight_date, pair, .keep_all = TRUE) |>
+    dplyr::select(fight_date, pair, is_title_fight)
+
+  fights |>
+    dplyr::mutate(
+      fight_date = as.Date(date),
+      pair = paste(
+        pmin(f1_name, f2_name),
+        pmax(f1_name, f2_name),
+        sep = "|"
+      )
+    ) |>
+    dplyr::left_join(title_lookup, by = c("fight_date", "pair")) |>
+    dplyr::mutate(is_title_fight = is_title_fight %in% TRUE) |>
+    dplyr::select(-pair)
+}
+
 prepare_fight_details <- function(fights, min_year = 2000) {
   prepared <- fights |>
     dplyr::filter(
@@ -286,7 +318,8 @@ prepare_fight_details <- function(fights, min_year = 2000) {
         '<a href="%s" target="_blank" rel="noopener">UFCStats</a>',
         fight_url
       ),
-      weight_class = normalize_weight_class(weight_class)
+      weight_class = normalize_weight_class(weight_class),
+      is_title_fight = is_title_fight %in% TRUE
     )
 
   prepared |>
@@ -310,6 +343,7 @@ prepare_fight_details <- function(fights, min_year = 2000) {
       f2_name,
       winner,
       weight_class,
+      is_title_fight,
       finish_type,
       method,
       round,

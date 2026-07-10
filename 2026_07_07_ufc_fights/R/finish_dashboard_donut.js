@@ -23,6 +23,7 @@
     men: false,
     women: false,
   };
+  var titleFightsOnly = false;
   var linkingYearEvent = false;
   var eventLatestDate = {};
   var allYearsOrdered = [];
@@ -112,6 +113,16 @@
     return rowsFromKeys(lastExternalKeys);
   }
 
+  function getScopedRows() {
+    var rows = getExternalRows();
+    if (!titleFightsOnly) {
+      return rows;
+    }
+    return rows.filter(function (row) {
+      return row.is_title_fight;
+    });
+  }
+
   function unionKeys(a, b) {
     var tmp = {};
     a.forEach(function (k) {
@@ -193,7 +204,7 @@
     if (grayOutByKind.men) {
       return 0;
     }
-    var baseRows = getExternalRows();
+    var baseRows = getScopedRows();
     var menKeys = keysForKind("men", baseRows);
     return menKeys ? menKeys.length : 0;
   }
@@ -202,35 +213,43 @@
     if (grayOutByKind.women) {
       return 0;
     }
-    var baseRows = getExternalRows();
+    var baseRows = getScopedRows();
     var womenKeys = keysForKind("women", baseRows);
     return womenKeys ? womenKeys.length : 0;
   }
 
-  function getActiveRows() {
-    var rows = getExternalRows();
-    var donutKeys = donutKeysFromSelection();
-    if (!donutKeys || donutKeys.length === 0) {
-      return rows;
+  function resolveTableKeys() {
+    var baseRows = getScopedRows();
+    var donutKeys = hasActiveDonutFilter()
+      ? donutKeysFromSelection(baseRows)
+      : null;
+
+    if (donutKeys) {
+      return donutKeys;
     }
-    var keySet = {};
-    donutKeys.forEach(function (k) {
-      keySet[k] = true;
-    });
-    return rows.filter(function (row) {
-      return keySet[row.key];
-    });
+    if (titleFightsOnly) {
+      return baseRows.map(function (row) {
+        return row.key;
+      });
+    }
+    return null;
+  }
+
+  function getActiveRows() {
+    var keys = resolveTableKeys();
+    var baseRows = getScopedRows();
+    if (!keys) {
+      return baseRows;
+    }
+    return rowsFromKeyList(baseRows, keys);
   }
 
   function getActiveKeyCount() {
-    if (!listenHandle) {
-      return getActiveRows().length;
+    var keys = resolveTableKeys();
+    if (keys) {
+      return keys.length;
     }
-    var keys = listenHandle.filteredKeys;
-    if (keys === null || keys === undefined) {
-      return getExternalRows().length;
-    }
-    return keys.length;
+    return getScopedRows().length;
   }
 
   function resolveSliceLabel(el, event) {
@@ -329,7 +348,7 @@
   }
 
   function rowsForDonut(kind) {
-    var baseRows = getExternalRows();
+    var baseRows = getScopedRows();
 
     if (
       kind === "outcome" &&
@@ -516,6 +535,8 @@
     rebuildSelectizeOptions(yearSelectize, allYearsOrdered);
 
     linkingYearEvent = false;
+    titleFightsOnly = false;
+    updateTitleToggle();
     yearSelectize.trigger("change");
   }
 
@@ -536,6 +557,26 @@
     });
   }
 
+  function updateTitleToggle() {
+    var btn = document.getElementById("toggle-title-fights");
+    if (!btn) {
+      return;
+    }
+    btn.setAttribute("aria-pressed", titleFightsOnly ? "true" : "false");
+    if (titleFightsOnly) {
+      btn.classList.add("is-on");
+    } else {
+      btn.classList.remove("is-on");
+    }
+  }
+
+  function toggleTitleFights() {
+    titleFightsOnly = !titleFightsOnly;
+    submittedMode = false;
+    updateTitleToggle();
+    pushDonutFilter();
+  }
+
   function keysForFilter(kind, label, rows) {
     return rows
       .filter(function (row) {
@@ -552,11 +593,10 @@
       });
   }
 
-  function donutKeysFromSelection() {
+  function donutKeysFromSelection(baseRows) {
     if (!hasActiveDonutFilter()) {
       return null;
     }
-    var baseRows = getExternalRows();
     var resultKeys = null;
 
     var outcomeKeys = keysForKind("outcome", baseRows);
@@ -581,7 +621,7 @@
       return;
     }
 
-    var keys = donutKeysFromSelection();
+    var keys = resolveTableKeys();
 
     applying = true;
     if (!keys || keys.length === 0) {
@@ -929,6 +969,7 @@
     updateSubmitButton();
     updateClearButton();
     updateGenderToggles();
+    updateTitleToggle();
   }
 
   function refreshExternalBaseline(retry) {
@@ -1352,6 +1393,14 @@
       womenToggle.addEventListener("click", function (e) {
         e.preventDefault();
         toggleGrayOutKind("women");
+      });
+    }
+
+    var titleToggle = document.getElementById("toggle-title-fights");
+    if (titleToggle) {
+      titleToggle.addEventListener("click", function (e) {
+        e.preventDefault();
+        toggleTitleFights();
       });
     }
 

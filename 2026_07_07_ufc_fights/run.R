@@ -24,7 +24,7 @@ if (!file.exists("data/ufc_fights.csv") ||
 fights <- load_fight_data()
 ultimate <- load_ultimate_data()
 results <- save_week_plots(fights, ultimate)
-dashboard_path <- save_finish_dashboard(fights)
+dashboard_path <- save_finish_dashboard(fights, ultimate = ultimate)
 
 cat("\n=== Fights by year (recent) ===\n")
 print(results$year_summary |> dplyr::slice_tail(n = 5))

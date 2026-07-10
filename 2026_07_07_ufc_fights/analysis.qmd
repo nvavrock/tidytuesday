@@ -2,7 +2,7 @@
 title: "TidyTuesday: UFC Athletes and Fight Data"
 subtitle: "Week 27 · 2026-07-07"
 author: "Nate Vavrock"
-description: "UFC finish mix, reach advantage, and weight-class breakdowns from TidyTuesday week 27 (2026-07-07). Includes links to an interactive finish dashboard."
+description: "UFC finish mix, reach advantage, and weight-class breakdowns from TidyTuesday week 27. Links to an interactive finish dashboard with Men/Women and title-fight filters."
 format:
   html:
     toc: true
@@ -51,7 +51,7 @@ invisible(file.copy(report_pngs, file.path(fig_dir, basename(report_pngs)), over
 
 Data from [TidyTuesday 2026-07-07](https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-07-07): UFC bout and athlete records compiled in the [`{fightr}`](https://github.com/benyamindsmith/fightr) package — curated by Benjamin Smith.
 
-Charts below embed static PNGs from `output/` (same files used for LinkedIn and slides). For filterable finish breakdowns — year, event, outcome, and division with linked donuts and a searchable fight table (2020–2026) — open the [interactive finish dashboard](output/_widget/finish_dashboard.html).
+Charts below embed static PNGs from `output/` (same files used for LinkedIn and slides). For filterable finish breakdowns — year, event, outcome, division, **Men / Women**, and **title fights** — with linked donuts and a searchable fight table (2020–2026), open the [interactive finish dashboard](output/_widget/finish_dashboard.html).
 
 > The `fightr` package provides a comprehensive, historical dataset of Ultimate Fighting Championship (UFC) bouts and athlete-level profile information.
 
@@ -77,7 +77,7 @@ summarise_fights_by_year(fights) |>
 
 ## Angle 2: Finish mix
 
-How have KO/TKO, submissions, and decisions shifted as a share of outcomes? The [interactive finish dashboard](output/_widget/finish_dashboard.html) lets you slice this pattern by year, event, and division.
+How have KO/TKO, submissions, and decisions shifted as a share of outcomes? The [interactive finish dashboard](output/_widget/finish_dashboard.html) lets you slice by year, event, division, gender, and title fights.
 
 ```{r finish}
 knitr::include_graphics("report-figures/02_finish_mix.png")

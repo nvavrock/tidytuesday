@@ -35,7 +35,8 @@ build_fight_index <- function(fight_details) {
       event_name = as.character(event_name),
       finish_type = as.character(finish_type),
       weight_class = as.character(weight_class),
-      is_womens = grepl("^Women's ", as.character(weight_class))
+      is_womens = grepl("^Women's ", as.character(weight_class)),
+      is_title_fight = is_title_fight %in% TRUE
     )
 }
 
@@ -505,16 +506,20 @@ page_css <- function() {
   )
 }
 
-build_finish_dashboard <- function(fights, min_year = NULL) {
+build_finish_dashboard <- function(fights, min_year = NULL, ultimate = NULL) {
   year_floor <- if (is.null(min_year)) {
     min(fights$year, na.rm = TRUE)
   } else {
     min_year
   }
 
-  fight_details <- prepare_fight_details(fights, min_year = year_floor)
+  fight_details <- fights |>
+    attach_title_bouts(ultimate = ultimate) |>
+    prepare_fight_details(min_year = year_floor)
 
   year_levels <- sort(unique(fight_details$year), decreasing = TRUE)
+
+  fight_index_rows <- build_fight_index(fight_details)
 
   fight_details <- fight_details |>
     dplyr::mutate(
@@ -605,7 +610,7 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
     htmltools::tags$script(
       id = "fight-index",
       type = "application/json",
-      htmltools::HTML(jsonlite::toJSON(build_fight_index(fight_details), dataframe = "rows"))
+      htmltools::HTML(jsonlite::toJSON(fight_index_rows, dataframe = "rows"))
     ),
     htmltools::tags$script(
       id = "finish-colors",
@@ -668,7 +673,8 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
           "Multi-select within one donut (Qlik-style): click to toggle slices; double-click to clear. ",
           "Selected slices stay full color; others dim. ",
           "Apply slices rescales each donut to the selection (100%). ",
-          "Use Men / Women toggles to include or exclude each gender from division donuts and the fight log."
+          "Use Men / Women toggles to include or exclude each gender from division donuts and the fight log. ",
+          "Title fights limits the dashboard to championship bouts only."
         )
       ),
       htmltools::tags$div(
@@ -689,6 +695,13 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
             class = "gender-toggle is-on",
             `aria-pressed` = "true",
             "Women"
+          ),
+          htmltools::tags$button(
+            type = "button",
+            id = "toggle-title-fights",
+            class = "gender-toggle",
+            `aria-pressed` = "false",
+            "Title fights"
           )
         ),
         htmltools::tags$div(
@@ -735,8 +748,51 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
   )
 }
 
+dashboard_og_tags <- function() {
+  base <- "https://nvavrock.github.io/tidytuesday/2026_07_07_ufc_fights"
+  htmltools::tagList(
+    htmltools::tags$meta(
+      name = "description",
+      content = paste(
+        "Interactive UFC finish dashboard: filter by year, event, outcome,",
+        "division, Men/Women, and title fights. Linked donuts and fight log."
+      )
+    ),
+    htmltools::tags$meta(property = "og:type", content = "website"),
+    htmltools::tags$meta(property = "og:title", content = "UFC finish breakdown"),
+    htmltools::tags$meta(
+      property = "og:description",
+      content = paste(
+        "Filter UFC finishes by year, event, outcome, division, Men/Women,",
+        "and title fights. Linked donuts and searchable fight log, 2020–2026."
+      )
+    ),
+    htmltools::tags$meta(
+      property = "og:url",
+      content = paste0(base, "/output/_widget/finish_dashboard.html")
+    ),
+    htmltools::tags$meta(
+      property = "og:image",
+      content = paste0(base, "/output/05_finish_dashboard_donuts.png")
+    ),
+    htmltools::tags$meta(property = "og:image:width", content = "1500"),
+    htmltools::tags$meta(property = "og:image:height", content = "900"),
+    htmltools::tags$meta(name = "twitter:card", content = "summary_large_image"),
+    htmltools::tags$meta(property = "twitter:title", content = "UFC finish breakdown"),
+    htmltools::tags$meta(
+      property = "twitter:description",
+      content = "Interactive UFC finish dashboard with Men/Women and title-fight filters."
+    ),
+    htmltools::tags$meta(
+      property = "twitter:image",
+      content = paste0(base, "/output/05_finish_dashboard_donuts.png")
+    )
+  )
+}
+
 save_finish_dashboard <- function(
     fights,
+    ultimate = NULL,
     output_path = "output/_widget/finish_dashboard.html"
 ) {
   widget_dir <- dirname(output_path)
@@ -756,7 +812,11 @@ save_finish_dashboard <- function(
     )
   )
 
-  dashboard_body <- build_finish_dashboard(fights, min_year = 2020)
+  dashboard_body <- build_finish_dashboard(
+    fights,
+    min_year = 2020,
+    ultimate = ultimate
+  )
 
   page <- htmltools::attachDependencies(
     htmltools::tags$html(
@@ -771,13 +831,14 @@ save_finish_dashboard <- function(
           rel = "stylesheet",
           href = "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&display=swap"
         ),
+        dashboard_og_tags(),
         htmltools::tags$style(htmltools::HTML(page_css()))
       ),
       htmltools::tags$body(
         htmltools::tags$h1("Finish breakdown"),
         htmltools::tags$p(
           class = "page-subtitle",
-          "2020–2026 (through 2026-06-27) · filter by year, event, outcome, and division"
+          "2020–2026 (through 2026-06-27) · year, event, outcome, division, Men/Women, title fights"
         ),
         htmltools::tags$div(
           id = "hero-stats",
