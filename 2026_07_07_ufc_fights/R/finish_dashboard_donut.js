@@ -806,23 +806,30 @@
     }
 
     var agg = aggregate(rows, kind);
-    var data = [
-      {
-        labels: agg.labels,
-        values: agg.values,
-        type: "pie",
-        hole: 0.45,
-        textinfo: "label+percent",
-        textposition: "outside",
-        sort: false,
-        marker: {
-          colors: agg.colors,
-          line: { color: dashTheme.bg || "#1A1A1E", width: 2 },
-        },
-        textfont: { color: dashTheme.text || "#E5E5E5" },
-        hovertemplate: "<b>%{label}</b><br>%{percent}<extra></extra>",
+    var pieTrace = {
+      labels: agg.labels,
+      values: agg.values,
+      type: "pie",
+      hole: 0.45,
+      textinfo: "label+percent",
+      textposition: "outside",
+      sort: false,
+      marker: {
+        colors: agg.colors,
+        line: { color: dashTheme.bg || "#1A1A1E", width: 2 },
       },
-    ];
+      textfont: { color: dashTheme.text || "#E5E5E5" },
+      hovertemplate: "<b>%{label}</b><br>%{percent}<extra></extra>",
+    };
+
+    if (kind !== "outcome") {
+      // First division slice sits at 12 o'clock; rotate so Flyweight's
+      // outside label is not clipped by the title or panel edge.
+      pieTrace.rotation = 90;
+      pieTrace.insidetextorientation = "horizontal";
+    }
+
+    var data = [pieTrace];
 
     var titleN =
       subtitleN !== undefined && subtitleN !== null ? subtitleN : agg.n;
@@ -868,11 +875,17 @@
       showlegend: true,
       legend: {
         orientation: "h",
-        y: -0.15,
-        font: { color: dashTheme.text_muted || "#A1A1AA" },
+        y: kind === "outcome" ? -0.15 : -0.22,
+        font: {
+          color: dashTheme.text_muted || "#A1A1AA",
+          size: kind === "outcome" ? 12 : 11,
+        },
         bgcolor: "rgba(0,0,0,0)",
       },
-      margin: { t: 70, b: 50, l: 10, r: 10 },
+      margin:
+        kind === "outcome"
+          ? { t: 70, b: 50, l: 10, r: 10 }
+          : { t: 80, b: 110, l: 60, r: 60 },
       annotations: annotations,
     };
 

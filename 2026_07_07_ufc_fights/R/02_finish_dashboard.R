@@ -238,8 +238,13 @@ dashboard_css <- function() {
       }
       .finish-dashboard .finish-donut {
         width: 100%%;
-        height: 360px;
+        height: 380px;
         margin-top: 0.25em;
+        overflow: visible;
+      }
+      .finish-dashboard .finish-donut .js-plotly-plot,
+      .finish-dashboard .finish-donut .plot-container {
+        overflow: visible !important;
       }
       .finish-dashboard .donut-gray-btn {
         display: block;
