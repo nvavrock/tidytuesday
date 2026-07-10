@@ -3,15 +3,26 @@
 DATA_SOURCE_CAPTION <- "Source: fightr / UFCStats via TidyTuesday"
 
 FINISH_COLORS <- c(
-  "KO/TKO" = "#D55E00",
-  "Submission" = "#0072B2",
-  "Decision" = "#009E73",
-  "Other" = "#999999"
+  "KO/TKO" = "#E10600",
+  "Submission" = "#4A6FA5",
+  "Decision" = "#6B7280",
+  "Other" = "#3F3F46"
+)
+
+DASH_THEME <- list(
+  bg = "#0B0B0D",
+  surface = "#141418",
+  text = "#E5E5E5",
+  text_muted = "#A1A1AA",
+  accent = "#C8102E",
+  accent_gold = "#C9A227",
+  border = "#2A2A30",
+  dimmed = "#3F3F46"
 )
 
 WEIGHT_CLASS_PALETTE <- c(
-  "#0072B2", "#D55E00", "#009E73", "#CC79A7", "#56B4E9",
-  "#E69F00", "#332288", "#882255", "#44AA99", "#999999"
+  "#E10600", "#4A6FA5", "#C9A227", "#9B59B6", "#2ECC71",
+  "#E67E22", "#1ABC9C", "#E84393", "#3498DB", "#6B7280"
 )
 
 WEIGHT_CLASS_LEVELS <- c(

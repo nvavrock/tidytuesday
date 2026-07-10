@@ -27,18 +27,33 @@
   var eventLatestDate = {};
   var allYearsOrdered = [];
   var allEventsOrdered = [];
-  var DIMMED_SLICE = "#D1D5DB";
+  var dashTheme = {
+    bg: "#0B0B0D",
+    surface: "#141418",
+    text: "#E5E5E5",
+    text_muted: "#A1A1AA",
+    accent: "#C8102E",
+    accent_gold: "#C9A227",
+    border: "#2A2A30",
+    dimmed: "#3F3F46",
+  };
+  var DIMMED_SLICE = dashTheme.dimmed;
 
   function loadConfig() {
     var indexEl = document.getElementById("fight-index");
     var finishEl = document.getElementById("finish-colors");
     var divisionEl = document.getElementById("division-colors");
+    var themeEl = document.getElementById("dash-theme");
     if (!indexEl || !finishEl || !divisionEl) {
       return false;
     }
     fightIndex = JSON.parse(indexEl.textContent);
     finishColors = JSON.parse(finishEl.textContent);
     divisionColors = JSON.parse(divisionEl.textContent);
+    if (themeEl) {
+      dashTheme = JSON.parse(themeEl.textContent);
+      DIMMED_SLICE = dashTheme.dimmed || DIMMED_SLICE;
+    }
     buildEventDateLookup();
     allEventsOrdered = computeAllowedEvents([]);
     allYearsOrdered = computeAllowedYears([]);
@@ -402,7 +417,7 @@
     }
     var hasSelection = hasAnyDonutSelection();
     btn.disabled = !hasSelection || submittedMode;
-    btn.textContent = submittedMode ? "Submitted" : "Submit selection";
+    btn.textContent = submittedMode ? "Applied" : "Apply slices";
   }
 
   function updateClearButton() {
@@ -411,6 +426,97 @@
       return;
     }
     btn.disabled = !hasActiveDonutFilter();
+  }
+
+  function finishSharePct(rows, finishType) {
+    if (!rows.length) {
+      return "—";
+    }
+    var count = rows.filter(function (row) {
+      return row.finish_type === finishType;
+    }).length;
+    return Math.round((100 * count) / rows.length) + "%";
+  }
+
+  function finishRatePct(rows) {
+    if (!rows.length) {
+      return "—";
+    }
+    var finishes = rows.filter(function (row) {
+      return (
+        row.finish_type === "KO/TKO" || row.finish_type === "Submission"
+      );
+    }).length;
+    return Math.round((100 * finishes) / rows.length);
+  }
+
+  function getDisplayedRows() {
+    if (!listenHandle) {
+      return getActiveRows();
+    }
+    var keys = listenHandle.filteredKeys;
+    if (keys === null || keys === undefined) {
+      return fightIndex;
+    }
+    return rowsFromKeys(keys);
+  }
+
+  function updateHeroStats() {
+    var activeRows = getDisplayedRows();
+    var activeCount = getActiveKeyCount();
+
+    var fightsEl = document.getElementById("stat-fights");
+    if (fightsEl) {
+      fightsEl.textContent = activeCount.toLocaleString();
+    }
+
+    var koEl = document.getElementById("stat-ko");
+    if (koEl) {
+      koEl.textContent = finishSharePct(activeRows, "KO/TKO");
+    }
+
+    var subEl = document.getElementById("stat-sub");
+    if (subEl) {
+      subEl.textContent = finishSharePct(activeRows, "Submission");
+    }
+
+    var decEl = document.getElementById("stat-dec");
+    if (decEl) {
+      decEl.textContent = finishSharePct(activeRows, "Decision");
+    }
+
+    var countEl = document.getElementById("active-count");
+    if (countEl) {
+      countEl.textContent =
+        "Active fights: " + activeCount.toLocaleString();
+    }
+  }
+
+  function clearExternalFilters() {
+    var yearSelectize = getSelectize("year_pick");
+    var eventSelectize = getSelectize("event_name");
+    if (!yearSelectize || !eventSelectize) {
+      return;
+    }
+
+    linkingYearEvent = true;
+
+    filterSelectItems(yearSelectize.items)
+      .slice()
+      .forEach(function (value) {
+        yearSelectize.removeItem(value, true);
+      });
+    filterSelectItems(eventSelectize.items)
+      .slice()
+      .forEach(function (value) {
+        eventSelectize.removeItem(value, true);
+      });
+
+    rebuildSelectizeOptions(eventSelectize, allEventsOrdered);
+    rebuildSelectizeOptions(yearSelectize, allYearsOrdered);
+
+    linkingYearEvent = false;
+    yearSelectize.trigger("change");
   }
 
   function updateGrayOutButtons() {
@@ -711,8 +817,9 @@
         sort: false,
         marker: {
           colors: agg.colors,
-          line: { color: "#FFFFFF", width: 1 },
+          line: { color: dashTheme.bg || "#1A1A1E", width: 2 },
         },
+        textfont: { color: dashTheme.text || "#E5E5E5" },
         hovertemplate: "<b>%{label}</b><br>%{percent}<extra></extra>",
       },
     ];
@@ -720,15 +827,53 @@
     var titleN =
       subtitleN !== undefined && subtitleN !== null ? subtitleN : agg.n;
 
+    var annotations = [];
+    if (kind === "outcome" && agg.n > 0) {
+      var kpiText;
+      if (selectedLabelsByKind.outcome.size > 0) {
+        kpiText =
+          getActiveKeyCount().toLocaleString() +
+          "<br><sup>selected</sup>";
+      } else {
+        kpiText =
+          finishRatePct(rows) +
+          "%<br><sup>finishes</sup>";
+      }
+      annotations.push({
+        text: kpiText,
+        showarrow: false,
+        font: {
+          size: 20,
+          color: dashTheme.text || "#E5E5E5",
+          family: "Barlow Condensed, sans-serif",
+        },
+        x: 0.5,
+        y: 0.5,
+      });
+    }
+
     var layout = {
+      paper_bgcolor: "rgba(0,0,0,0)",
+      plot_bgcolor: "rgba(0,0,0,0)",
+      font: {
+        color: dashTheme.text || "#E5E5E5",
+        family: "Barlow Condensed, sans-serif",
+      },
       title: {
         text: titleFor(kind, titleN),
         x: 0.5,
         xanchor: "center",
+        font: { size: 16, color: "#F5F5F5" },
       },
       showlegend: true,
-      legend: { orientation: "h", y: -0.15 },
+      legend: {
+        orientation: "h",
+        y: -0.15,
+        font: { color: dashTheme.text_muted || "#A1A1AA" },
+        bgcolor: "rgba(0,0,0,0)",
+      },
       margin: { t: 70, b: 50, l: 10, r: 10 },
+      annotations: annotations,
     };
 
     var config = { displayModeBar: false, displaylogo: false, doubleClick: false };
@@ -749,23 +894,18 @@
 
   function redrawAll() {
     ensureWomenVisible();
-    var activeCount = getActiveKeyCount();
     var menSelected =
       selectedLabelsByKind.men.size > 0 || grayOutByKind.men;
     var womenSelected =
       selectedLabelsByKind.women.size > 0 || grayOutByKind.women;
 
-    var countEl = document.getElementById("active-count");
-    if (countEl) {
-      countEl.textContent =
-        "Active fights: " + activeCount.toLocaleString();
-    }
+    updateHeroStats();
 
     drawDonut(
       "donut-outcome",
       "outcome",
       rowsForDonut("outcome"),
-      selectedLabelsByKind.outcome.size > 0 ? activeCount : null
+      selectedLabelsByKind.outcome.size > 0 ? getActiveKeyCount() : null
     );
     drawDonut(
       "donut-men",
@@ -1205,6 +1345,14 @@
       grayWomenBtn.addEventListener("click", function (e) {
         e.preventDefault();
         toggleGrayOutKind("women");
+      });
+    }
+
+    var clearFiltersBtn = document.getElementById("clear-external-filters");
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        clearExternalFilters();
       });
     }
 
