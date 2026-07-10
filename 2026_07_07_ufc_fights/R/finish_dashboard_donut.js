@@ -35,7 +35,7 @@
     accent: "#C8102E",
     accent_gold: "#C9A227",
     border: "#2A2A30",
-    dimmed: "#3F3F46",
+    dimmed: "#25252D",
   };
   var DIMMED_SLICE = dashTheme.dimmed;
 
@@ -823,9 +823,9 @@
     };
 
     if (kind !== "outcome") {
-      // First division slice sits at 12 o'clock; rotate so Flyweight's
-      // outside label is not clipped by the title or panel edge.
-      pieTrace.rotation = 90;
+      // Rotate the pie so the first division slice (Flyweight) is not clipped
+      // at 12 o'clock; +15° keeps top slice labels off the fight-count subtitle.
+      pieTrace.rotation = 105;
       pieTrace.insidetextorientation = "horizontal";
     }
 

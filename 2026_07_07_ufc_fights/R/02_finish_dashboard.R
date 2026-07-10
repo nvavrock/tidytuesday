@@ -62,7 +62,7 @@ outcome_column_render_js <- function() {
     "function(data, type, row, meta) {
       if (type !== 'display' || !data) return data;
       var colors = %s;
-      var color = colors[data] || '#3F3F46';
+      var color = colors[data] || '#6D5B4B';
       return '<span class=\"outcome-cell\">' +
         '<span class=\"outcome-dot\" style=\"background:' + color + '\"></span>' +
         data + '</span>';
@@ -245,6 +245,9 @@ dashboard_css <- function() {
       .finish-dashboard .finish-donut .js-plotly-plot,
       .finish-dashboard .finish-donut .plot-container {
         overflow: visible !important;
+      }
+      .finish-dashboard .finish-donut .g-gtitle {
+        transform: translateY(-5px);
       }
       .finish-dashboard .donut-gray-btn {
         display: block;
@@ -710,7 +713,7 @@ save_finish_dashboard <- function(
         htmltools::tags$h1("Finish breakdown"),
         htmltools::tags$p(
           class = "page-subtitle",
-          "2020–2026 · filter by year, event, outcome, and division"
+          "2020–2026 (through 2026-06-27) · filter by year, event, outcome, and division"
         ),
         htmltools::tags$div(
           id = "hero-stats",

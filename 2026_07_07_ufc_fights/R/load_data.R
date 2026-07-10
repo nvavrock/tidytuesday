@@ -5,8 +5,8 @@ DATA_SOURCE_CAPTION <- "Source: fightr / UFCStats via TidyTuesday"
 FINISH_COLORS <- c(
   "KO/TKO" = "#E10600",
   "Submission" = "#4A6FA5",
-  "Decision" = "#6B7280",
-  "Other" = "#3F3F46"
+  "Decision" = "#8B9CB3",
+  "Other" = "#6D5B4B"
 )
 
 DASH_THEME <- list(
@@ -17,7 +17,7 @@ DASH_THEME <- list(
   accent = "#C8102E",
   accent_gold = "#C9A227",
   border = "#2A2A30",
-  dimmed = "#3F3F46"
+  dimmed = "#25252D"
 )
 
 WEIGHT_CLASS_PALETTE <- c(
