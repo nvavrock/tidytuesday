@@ -26,6 +26,64 @@ donut_gray_btn <- function(id, label) {
   )
 }
 
+build_weight_class_modal <- function() {
+  scales <- weight_class_scales()
+  render_table <- function(rows) {
+  htmltools::tags$table(
+      class = "wc-modal-table",
+      htmltools::tags$thead(
+        htmltools::tags$tr(
+          htmltools::tags$th("Division"),
+          htmltools::tags$th("Limit")
+        )
+      ),
+      htmltools::tags$tbody(
+        lapply(seq_len(nrow(rows)), function(i) {
+          label <- if (rows$gender[i] == "Women") {
+            paste0("Women's ", rows$division[i])
+          } else {
+            rows$division[i]
+          }
+          htmltools::tags$tr(
+            htmltools::tags$td(label),
+            htmltools::tags$td(paste0("\u2264 ", rows$limit_lb[i], " lb"))
+          )
+        })
+      )
+    )
+  }
+
+  htmltools::tagList(
+    htmltools::tags$div(
+      id = "weight-class-modal",
+      class = "wc-modal",
+      `aria-hidden` = "true",
+      htmltools::tags$div(class = "wc-modal-backdrop", `data-close-modal` = "true"),
+      htmltools::tags$div(
+        class = "wc-modal-panel",
+        role = "dialog",
+        `aria-modal` = "true",
+        `aria-labelledby` = "weight-class-modal-title",
+        htmltools::tags$button(
+          type = "button",
+          class = "wc-modal-close",
+          `aria-label` = "Close",
+          "\u00d7"
+        ),
+        htmltools::tags$h2(id = "weight-class-modal-title", "UFC weight class limits"),
+        htmltools::tags$p(
+          class = "wc-modal-note",
+          "Upper limits in pounds. Catch, super heavyweight, and open-weight bouts are excluded."
+        ),
+        htmltools::tags$h3(class = "wc-modal-section", "Men"),
+        render_table(dplyr::filter(scales, gender == "Men")),
+        htmltools::tags$h3(class = "wc-modal-section", "Women"),
+        render_table(dplyr::filter(scales, gender == "Women"))
+      )
+    )
+  )
+}
+
 build_fight_index <- function(fight_details) {
   fight_details |>
     dplyr::transmute(
@@ -494,6 +552,120 @@ page_css <- function() {
         color: #F5F5F5;
         line-height: 1.1;
       }
+      .filter-deck-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .btn-weight-limits {
+        background: transparent;
+        border: 1px solid %s;
+        color: %s;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.35em 0.85em;
+        min-height: 36px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn-weight-limits:hover {
+        border-color: %s;
+        color: %s;
+      }
+      .wc-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .wc-modal.is-open {
+        display: flex;
+      }
+      .wc-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+      }
+      .wc-modal-panel {
+        position: relative;
+        width: min(100%%, 520px);
+        max-height: min(88vh, 720px);
+        overflow: auto;
+        background: %s;
+        border: 1px solid %s;
+        border-top: 3px solid %s;
+        border-radius: 8px;
+        padding: 1.25rem 1.35rem 1.5rem;
+        color: %s;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+      }
+      .wc-modal-panel h2 {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin: 0 2rem 0.35rem 0;
+        color: #F5F5F5;
+      }
+      .wc-modal-section {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: %s;
+        margin: 1rem 0 0.45rem;
+      }
+      .wc-modal-note {
+        color: %s;
+        font-size: 0.85rem;
+        margin: 0 0 0.5rem;
+      }
+      .wc-modal-close {
+        position: absolute;
+        top: 0.65rem;
+        right: 0.75rem;
+        border: 0;
+        background: transparent;
+        color: %s;
+        font-size: 1.75rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0.15rem 0.35rem;
+      }
+      .wc-modal-close:hover {
+        color: #F5F5F5;
+      }
+      .wc-modal-table {
+        width: 100%%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+      }
+      .wc-modal-table th,
+      .wc-modal-table td {
+        padding: 0.45rem 0.55rem;
+        border-bottom: 1px solid %s;
+        text-align: left;
+      }
+      .wc-modal-table th {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: %s;
+      }
+      .wc-modal-table tr:last-child td {
+        border-bottom: 0;
+      }
     ",
     th$text, th$bg,
     th$text_muted,
@@ -502,6 +674,14 @@ page_css <- function() {
     FINISH_COLORS[["KO/TKO"]],
     FINISH_COLORS[["Submission"]],
     FINISH_COLORS[["Decision"]],
+    th$text_muted,
+    th$border, th$text,
+    th$accent, th$text,
+    th$surface, th$border, th$accent, th$text,
+    th$accent_gold,
+    th$text_muted,
+    th$text_muted,
+    th$border,
     th$text_muted
   )
 }
@@ -637,11 +817,20 @@ build_finish_dashboard <- function(fights, min_year = NULL, ultimate = NULL) {
         htmltools::tags$div(
           class = "filter-deck-header",
           htmltools::tags$p(class = "filter-deck-title", "Filters"),
-          htmltools::tags$button(
-            type = "button",
-            id = "clear-external-filters",
-            class = "btn-clear-filters",
-            "Clear filters"
+          htmltools::tags$div(
+            class = "filter-deck-actions",
+            htmltools::tags$button(
+              type = "button",
+              id = "open-weight-class-scales",
+              class = "btn-weight-limits",
+              "Weight limits"
+            ),
+            htmltools::tags$button(
+              type = "button",
+              id = "clear-external-filters",
+              class = "btn-clear-filters",
+              "Clear filters"
+            )
           )
         ),
         crosstalk::bscols(
@@ -865,6 +1054,7 @@ save_finish_dashboard <- function(
           )
         ),
         dashboard_body,
+        build_weight_class_modal(),
         htmltools::tags$p(
           class = "page-caption",
           htmltools::tags$small(DATA_SOURCE_CAPTION)

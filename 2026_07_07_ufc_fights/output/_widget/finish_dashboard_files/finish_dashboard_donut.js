@@ -1359,6 +1359,48 @@
     initSelectizeFilters(retry);
   }
 
+  function initWeightClassModal() {
+    var modal = document.getElementById("weight-class-modal");
+    var openBtn = document.getElementById("open-weight-class-scales");
+    if (!modal || !openBtn) {
+      return;
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function openModal() {
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      var closeBtn = modal.querySelector(".wc-modal-close");
+      if (closeBtn) {
+        closeBtn.focus();
+      }
+    }
+
+    openBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      openModal();
+    });
+
+    modal.querySelectorAll("[data-close-modal], .wc-modal-close").forEach(function (el) {
+      el.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeModal();
+      });
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) {
+        closeModal();
+      }
+    });
+  }
+
   function initDashboard() {
     if (!loadConfig()) {
       return;
@@ -1419,6 +1461,7 @@
 
     refreshExternalBaseline(0);
     initYearChipClick(0);
+    initWeightClassModal();
   }
 
   function boot() {

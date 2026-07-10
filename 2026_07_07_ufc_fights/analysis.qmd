@@ -124,6 +124,11 @@ summarise_weight_classes(fights) |>
   knitr::kable(caption = "Top 10 divisions by bout count")
 ```
 
+```{r weight-scales}
+weight_class_scales_table() |>
+  knitr::kable(caption = "UFC division upper weight limits (lb)")
+```
+
 **Takeaway:** **Lightweight** and **Welterweight** lead the bout count, with **Middleweight** and **Featherweight** close behind — consistent with the UFC's traditional depth in the 155–170 lb range.
 
 ---

@@ -71,6 +71,40 @@ WOMENS_DIVISION_LABELS <- c(
   "Featherweight"
 )
 
+weight_class_scales <- function() {
+  tibble::tibble(
+    division = c(
+      "Flyweight",
+      "Bantamweight",
+      "Featherweight",
+      "Lightweight",
+      "Welterweight",
+      "Middleweight",
+      "Light Heavyweight",
+      "Heavyweight",
+      "Strawweight",
+      "Flyweight",
+      "Bantamweight",
+      "Featherweight"
+    ),
+    gender = c(rep("Men", 8L), rep("Women", 4L)),
+    limit_lb = c(125L, 135L, 145L, 155L, 170L, 185L, 205L, 265L, 115L, 125L, 135L, 145L)
+  )
+}
+
+weight_class_scales_table <- function() {
+  weight_class_scales() |>
+    dplyr::mutate(
+      division = dplyr::if_else(
+        gender == "Women",
+        paste0("Women's ", division),
+        division
+      ),
+      `Weight limit` = paste0("\u2264 ", limit_lb, " lb")
+    ) |>
+    dplyr::select(Division = division, Gender = gender, `Weight limit`)
+}
+
 is_womens_division <- function(weight_class) {
   grepl("^Women's ", as.character(weight_class))
 }
