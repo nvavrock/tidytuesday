@@ -33,7 +33,7 @@ plot_reach_advantage <- function(ultimate) {
       title = "The longer-reach fighter wins more often,\nbut the edge is modest",
       subtitle = paste0(
         "Share of fights won by the fighter with longer reach ",
-        "(reach_dif = Blue − Red; excludes equal reach)"
+        "(excludes equal reach)"
       ),
       x = "Fighter with reach advantage",
       y = "Win rate",
