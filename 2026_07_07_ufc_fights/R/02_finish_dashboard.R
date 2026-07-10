@@ -73,7 +73,8 @@ outcome_column_render_js <- function() {
 
 dashboard_css <- function() {
   th <- DASH_THEME
-  sprintf(
+  paste0(
+    sprintf(
     "
       .finish-dashboard { margin: 0; }
       .finish-dashboard .filter-deck {
@@ -377,6 +378,53 @@ dashboard_css <- function() {
     th$text_muted,
     th$text_muted,
     th$accent, th$accent
+  ),
+    sprintf(
+      "
+      .finish-dashboard .gender-toggles {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-right: 0.25rem;
+      }
+      .finish-dashboard .gender-toggles-label {
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: %s;
+        margin-right: 0.15rem;
+      }
+      .finish-dashboard .gender-toggle {
+        background: transparent;
+        border: 1px solid %s;
+        color: %s;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.35em 0.85em;
+        min-height: 32px;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+      .finish-dashboard .gender-toggle:hover:not(.is-on) {
+        border-color: %s;
+        color: %s;
+      }
+      .finish-dashboard .gender-toggle.is-on {
+        background: %s;
+        border-color: %s;
+        color: #fff;
+      }
+    ",
+      th$text_muted,
+      th$border, th$text,
+      th$accent, th$text,
+      th$accent, th$accent
+    )
   )
 }
 
@@ -620,11 +668,29 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
           "Multi-select within one donut (Qlik-style): click to toggle slices; double-click to clear. ",
           "Selected slices stay full color; others dim. ",
           "Apply slices rescales each donut to the selection (100%). ",
-          "Gray out men's or women's hides that gender from division donuts."
+          "Use Men / Women toggles to include or exclude each gender from division donuts and the fight log."
         )
       ),
       htmltools::tags$div(
         class = "donut-toolbar",
+        htmltools::tags$div(
+          class = "gender-toggles",
+          htmltools::tags$span(class = "gender-toggles-label", "Show"),
+          htmltools::tags$button(
+            type = "button",
+            id = "toggle-men",
+            class = "gender-toggle is-on",
+            `aria-pressed` = "true",
+            "Men"
+          ),
+          htmltools::tags$button(
+            type = "button",
+            id = "toggle-women",
+            class = "gender-toggle is-on",
+            `aria-pressed` = "true",
+            "Women"
+          )
+        ),
         htmltools::tags$div(
           id = "active-count",
           "Active fights: (loading...)"
@@ -652,14 +718,12 @@ build_finish_dashboard <- function(fights, min_year = NULL) {
         ),
         htmltools::tags$div(
           class = "donut-col",
-          donut_mount("donut-men"),
-          donut_gray_btn("gray-out-donut-men", "Gray out men's")
+          donut_mount("donut-men")
         ),
         htmltools::tags$div(
           id = "donut-women-wrap",
           class = "donut-col donut-col-women",
-          donut_mount("donut-women"),
-          donut_gray_btn("gray-out-donut-women", "Gray out women's")
+          donut_mount("donut-women")
         )
       ),
       htmltools::tags$div(

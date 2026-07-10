@@ -519,25 +519,19 @@
     yearSelectize.trigger("change");
   }
 
-  function updateGrayOutButtons() {
+  function updateGenderToggles() {
     ["men", "women"].forEach(function (kind) {
-      var btn = document.getElementById("gray-out-donut-" + kind);
+      var btn = document.getElementById("toggle-" + kind);
       if (!btn) {
         return;
       }
-      var active = grayOutByKind[kind];
-      btn.textContent = active
-        ? kind === "men"
-          ? "Show men's"
-          : "Show women's"
-        : kind === "men"
-          ? "Gray out men's"
-          : "Gray out women's";
-      btn.setAttribute("aria-pressed", active ? "true" : "false");
-      if (active) {
-        btn.classList.add("is-active");
+      var on = !grayOutByKind[kind];
+      btn.textContent = kind === "men" ? "Men" : "Women";
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      if (on) {
+        btn.classList.add("is-on");
       } else {
-        btn.classList.remove("is-active");
+        btn.classList.remove("is-on");
       }
     });
   }
@@ -934,7 +928,7 @@
     );
     updateSubmitButton();
     updateClearButton();
-    updateGrayOutButtons();
+    updateGenderToggles();
   }
 
   function refreshExternalBaseline(retry) {
@@ -1345,17 +1339,17 @@
       });
     }
 
-    var grayMenBtn = document.getElementById("gray-out-donut-men");
-    if (grayMenBtn) {
-      grayMenBtn.addEventListener("click", function (e) {
+    var menToggle = document.getElementById("toggle-men");
+    if (menToggle) {
+      menToggle.addEventListener("click", function (e) {
         e.preventDefault();
         toggleGrayOutKind("men");
       });
     }
 
-    var grayWomenBtn = document.getElementById("gray-out-donut-women");
-    if (grayWomenBtn) {
-      grayWomenBtn.addEventListener("click", function (e) {
+    var womenToggle = document.getElementById("toggle-women");
+    if (womenToggle) {
+      womenToggle.addEventListener("click", function (e) {
         e.preventDefault();
         toggleGrayOutKind("women");
       });
