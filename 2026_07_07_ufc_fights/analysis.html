@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nate Vavrock">
+<meta name="description" content="UFC finish mix, reach advantage, and weight-class breakdowns from TidyTuesday week 27 (2026-07-07). Includes links to an interactive finish dashboard.">
 
 <title>TidyTuesday: UFC Athletes and Fight Data</title>
 <style>
@@ -69,10 +70,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
 <script src="analysis_files/libs/quarto-html/anchor.min.js"></script>
 <link href="analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="analysis_files/libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="analysis_files/libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="analysis_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="analysis_files/libs/bootstrap/bootstrap-293cc809d15782442e9b1098eedb6797.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<meta name="description" content="UFC finish mix, reach advantage, and weight-class breakdowns from TidyTuesday week 27 (2026-07-07). Includes links to an interactive finish dashboard.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TidyTuesday: UFC Athletes and Fight Data">
+<meta property="og:description" content="How UFC fights end over time, whether reach shows up in results, and division depth — with an interactive finish dashboard for 2020–2026.">
+<meta property="og:url" content="https://nvavrock.github.io/tidytuesday/2026_07_07_ufc_fights/analysis.html">
+<meta property="og:image" content="https://nvavrock.github.io/tidytuesday/2026_07_07_ufc_fights/report-figures/02_finish_mix.png">
+<meta property="og:image:width" content="1500">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TidyTuesday: UFC Athletes and Fight Data">
+<meta name="twitter:description" content="UFC finish mix, reach advantage, and weight classes — TidyTuesday week 27.">
+<meta name="twitter:image" content="https://nvavrock.github.io/tidytuesday/2026_07_07_ufc_fights/report-figures/02_finish_mix.png">
 
 
 </head>
@@ -90,6 +103,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p class="subtitle lead">Week 27 · 2026-07-07</p>
 </div>
 
+<div>
+  <div class="description">
+    UFC finish mix, reach advantage, and weight-class breakdowns from TidyTuesday week 27 (2026-07-07). Includes links to an interactive finish dashboard.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -154,7 +172,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 </div>
 <p>Data from <a href="https://github.com/rfordatascience/tidytuesday/tree/main/data/2026/2026-07-07">TidyTuesday 2026-07-07</a>: UFC bout and athlete records compiled in the <a href="https://github.com/benyamindsmith/fightr"><code>{fightr}</code></a> package — curated by Benjamin Smith.</p>
-<p>Charts below embed copies of the PNGs in <code>output/</code> (same files used for LinkedIn and slides).</p>
+<p>Charts below embed static PNGs from <code>output/</code> (same files used for LinkedIn and slides). For filterable finish breakdowns — year, event, outcome, and division with linked donuts and a searchable fight table (2020–2026) — open the <a href="output/_widget/finish_dashboard.html">interactive finish dashboard</a>.</p>
 <blockquote class="blockquote">
 <p>The <code>fightr</code> package provides a comprehensive, historical dataset of Ultimate Fighting Championship (UFC) bouts and athlete-level profile information.</p>
 </blockquote>
@@ -234,7 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="angle-2-finish-mix" class="level2">
 <h2 class="anchored" data-anchor-id="angle-2-finish-mix">Angle 2: Finish mix</h2>
-<p>How have KO/TKO, submissions, and decisions shifted as a share of outcomes?</p>
+<p>How have KO/TKO, submissions, and decisions shifted as a share of outcomes? The <a href="output/_widget/finish_dashboard.html">interactive finish dashboard</a> lets you slice this pattern by year, event, and division.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
